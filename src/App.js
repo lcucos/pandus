@@ -8,6 +8,7 @@
 import React, { Component } from 'react'
 import MapChart from './MapChart.js'
 import PageHeader from "./PageHeader.js";
+import PageFooter from "./PageFooter.js";
 import StatesTable from "./StatesTable.js"
 import ToggleButtonSummary from './ToggleButtonSummary.js';
 
@@ -117,6 +118,7 @@ class App extends Component {
             <ToggleButtonSummary  summary   ={this.summary} showFlags={this.showFlags}/>
             <MapChart             data      ={this.state.mapStatesByGeoId} showFlags={this.showFlags} statesGeo={this.statesGeo}/>
             <StatesTable          prepData  ={this.state.arrStates}/>
+            <PageFooter/>
             <p/> 
          </div>
          </center>
