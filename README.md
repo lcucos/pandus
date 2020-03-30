@@ -1,9 +1,22 @@
 # pandus
-Web app to visualize pandemic status
+Web app to visualize Covid 19 pandemic status. Project started as learning playground for React / JS with data from https://covidtracking.com/about-tracker/
+Please contribute and/or provide feedback as appropriate.
+Thank you
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Live at: https://https://cvd19.info.myroadtime.com/ 
 
-## Available Scripts
+
+Project bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+
+
+## Install
+
+In the project directory, run:
+
+### `npm install`
+
+
+## Run Locally
 
 In the project directory, you can run:
 
@@ -14,6 +27,10 @@ Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
 The page will reload if you make edits.<br />
 You will also see any lint errors in the console.
+
+## Other scripts
+
+In the project directory, you can run:
 
 ### `npm test`
 
