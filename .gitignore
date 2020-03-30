@@ -10,7 +10,7 @@
 
 # production
 /build
-./build.sh
+build.sh
 /public/index_prod.html
 
 # misc

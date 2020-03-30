@@ -7,7 +7,7 @@ import {
   Marker,
   Annotation
 } from "react-simple-maps";
-import statesGeo from "./states-10m.json";
+import statesGeo from "./data/maps/us/states-10m.json";
 
 const offsets = {
   VT: [90, -50],

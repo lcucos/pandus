@@ -2,9 +2,9 @@ import React, { Component } from 'react'
 import MapChart from './USAMap.js'
 import PageHeader from "./PageHeader.js";
 import StatesTable from "./StatesTable.js"
-
-import allStates from "./allstates.json";
 import ToggleButtonSummary from './ToggleButtonSummary.js';
+
+import allStates from "./data/maps/us/allstates.json";
 
 class App extends Component {
 
