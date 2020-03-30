@@ -3,7 +3,7 @@ Web app to visualize Covid 19 pandemic status. Project started as learning playg
 Please contribute and/or provide feedback as appropriate.
 Thank you
 
-Live at: https://https://cvd19.info.myroadtime.com/ 
+Live at: https://cvd19.info.myroadtime.com/ 
 
 
 Project bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
