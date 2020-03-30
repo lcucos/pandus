@@ -1,9 +1,16 @@
+/**
+ * Summary info and visualization toggle buttons 
+ *   
+ * Author: lcucos
+ * Date  : March 25 2020
+ */
+
 import React from 'react'
 import './styles.css';
 import Grid from '@material-ui/core/Grid';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
-import {updateTests} from './USAMap.js'
+import {updateTests} from './MapChart.js'
 
 
 function createButton(index,id, color, value,text){

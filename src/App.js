@@ -1,10 +1,18 @@
+/**
+ * Main React Component  
+ * 
+ * Author: lcucos
+ * Date  : March 25 2020
+ */
+
 import React, { Component } from 'react'
-import MapChart from './USAMap.js'
+import MapChart from './MapChart.js'
 import PageHeader from "./PageHeader.js";
 import StatesTable from "./StatesTable.js"
 import ToggleButtonSummary from './ToggleButtonSummary.js';
 
 import allStates from "./data/maps/us/allstates.json";
+import statesGeo from "./data/maps/us/states-10m.json";
 
 class App extends Component {
 
@@ -24,6 +32,7 @@ class App extends Component {
          tests:0,
          hospitalized:0
       }
+      this.statesGeo = statesGeo
       // set default data view flags
       // possible options: "tests","positives","hospitalized","deaths"
       this.showFlags=["positives", "deaths"];
@@ -106,7 +115,7 @@ class App extends Component {
          <div style = {{ width: '1200px' }} >
             <PageHeader           lastUpdate={this.summary} showFlags={this.showFlags}/>
             <ToggleButtonSummary  summary   ={this.summary} showFlags={this.showFlags}/>
-            <MapChart             data      ={this.state.mapStatesByGeoId} showFlags={this.showFlags}/>
+            <MapChart             data      ={this.state.mapStatesByGeoId} showFlags={this.showFlags} statesGeo={this.statesGeo}/>
             <StatesTable          prepData  ={this.state.arrStates}/>
             <p/> 
          </div>

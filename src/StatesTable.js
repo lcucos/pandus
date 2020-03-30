@@ -1,3 +1,11 @@
+/**
+ * Summary table
+ *   
+ * Author: lcucos
+ * Date  : March 25 2020
+ */
+
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
@@ -43,7 +51,7 @@ function stableSort(array, comparator) {
 const headCells = [
   { id: 'stateName', numeric: false, disablePadding: true, label: 'State' },
   { id: 'population', numeric: true, disablePadding: false, label: 'Population*' },
-  { id: 'tested', numeric: true, disablePadding: false, label: 'Tests**' },
+  { id: 'tested', numeric: true, disablePadding: false, label: 'Tests' },
   { id: 'positive', numeric: true, disablePadding: false, label: 'Positive' },
   { id: 'deaths', numeric: true, disablePadding: false, label: 'Deaths' },
   { id: 'hospitalized', numeric: true, disablePadding: false, label: 'Hospitalized' },
@@ -211,7 +219,7 @@ export default function StatesTable(data) {
         <p>* Population numbers from <a href="https://en.wikipedia.org/wiki/List_of_states_and_territories_of_the_United_States_by_population">States and territories of the United States by population</a> - July 2019 estimate
         </p>
         <p>
-        ** Tests numbers accuracy varies by state.
+        ** All values are dependent on data source accuracy.
         </p>
       </div>
     </div>

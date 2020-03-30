@@ -1,3 +1,10 @@
+/**
+ * Header section 
+ *   
+ * Author: lcucos
+ * Date  : March 25 2020
+ */
+
 import React, { Component } from 'react'
 import './styles.css';
 

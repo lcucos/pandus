@@ -1,3 +1,10 @@
+/**
+ * Display a d3 geo map with various statistics
+ *   
+ * Author: lcucos
+ * Date  : March 25 2020
+ */
+
 import React from "react";
 import { geoCentroid } from "d3-geo";
 import {
@@ -7,7 +14,6 @@ import {
   Marker,
   Annotation
 } from "react-simple-maps";
-import statesGeo from "./data/maps/us/states-10m.json";
 
 const offsets = {
   VT: [90, -50],
@@ -31,7 +37,9 @@ class MapChart extends React.Component {
 
   constructor(props){
     super(props);
+
     this.allData = props.data
+    this.statesGeo = props.statesGeo
 
     this.state={
       showFlags:this.setUIFlags(props.showFlags)
@@ -117,7 +125,7 @@ class MapChart extends React.Component {
     return (
       <svg width={1200} height={760}>
       <ComposableMap projection="geoAlbersUsa">
-        <Geographies geography={statesGeo}>
+        <Geographies geography={this.statesGeo}>
           {({ geographies }) => (
             <>
               {geographies.map(geo => (
