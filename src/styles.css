@@ -2,3 +2,17 @@
     color: #454545;
     font-size: 90%;
 }
+
+.row-components{
+    display:flex;
+    flex-direction:row;
+}
+
+.recharts-cartesian-axis {    
+    font-size: 0.8rem;
+    font-family: Roboto, sans-serif;
+}
+
+.color_positive{
+    color: #cf7150;
+}

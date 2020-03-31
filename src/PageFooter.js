@@ -1,3 +1,10 @@
+/**
+ * Summary info and visualization toggle buttons 
+ *   
+ * Author: lcucos
+ * Date  : March 30 2020
+ */
+
 import React, { Component } from 'react'
 import './styles.css';
 
@@ -16,11 +23,12 @@ export default  class PageFooter extends Component{
          <p>
          ** All values are dependent on data source accuracy.
          </p>
-         <hr/>
-         <p>
-         Project available on github  : <a href="https://github.com/lcucos/pandus">https://github.com/lcucos/pandus</a>
-         </p>
+         <br/>
         </div>
        );
     }
+    /*<hr/><p>
+    Project available on github : <a href="https://github.com/lcucos/pandus">https://github.com/lcucos/pandus</a>
+    </p>
+    */
  }

@@ -14,6 +14,7 @@ import {
   Marker,
   Annotation
 } from "react-simple-maps";
+import {Colors} from './Colors.js'
 
 const offsets = {
   VT: [90, -50],
@@ -94,10 +95,10 @@ class MapChart extends React.Component {
           centroid[0] < -67 &&
           (Object.keys(offsets).indexOf(curid) === -1 ? (
             <Marker coordinates={centroid}>
-              {this.showCircle(sizeT, this.getShowDataFlag("tests"), "#000000",0.15)}
-              {this.showCircle(sizeC, this.getShowDataFlag("positives"), "#F53",0.7)}
-              {this.showCircle(sizeH, this.getShowDataFlag("hospitalized"), "#0000CC",0.2)}
-              {this.showCircle(sizeD, this.getShowDataFlag("deaths"), "#832707",0.5)}
+              {this.showCircle(sizeT, this.getShowDataFlag("tests"), Colors.test,0.15)}
+              {this.showCircle(sizeC, this.getShowDataFlag("positives"), Colors.positive,0.35)}
+              {this.showCircle(sizeH, this.getShowDataFlag("hospitalized"), Colors.hospitalized,0.3)}
+              {this.showCircle(sizeD, this.getShowDataFlag("deaths"), Colors.death,0.3)}
               <text y="2" fontSize={stateIDFontSize} textAnchor="middle">
                 {curid}
               </text>
@@ -108,10 +109,10 @@ class MapChart extends React.Component {
               dx={offsets[curid][0]}
               dy={offsets[curid][1]}
             >
-              {this.showCircle(sizeT, this.getShowDataFlag("tests"), "#000000",0.15)}
-              {this.showCircle(sizeC, this.getShowDataFlag("positives"), "#F53",0.7)}
-              {this.showCircle(sizeH, this.getShowDataFlag("hospitalized"), "#0000CC",0.2)}
-              {this.showCircle(sizeD, this.getShowDataFlag("deaths"), "#832707",0.5)}
+              {this.showCircle(sizeT, this.getShowDataFlag("tests"), Colors.test,0.15)}
+              {this.showCircle(sizeC, this.getShowDataFlag("positives"), Colors.positive,0.35)}
+              {this.showCircle(sizeH, this.getShowDataFlag("hospitalized"), Colors.hospitalized,0.3)}
+              {this.showCircle(sizeD, this.getShowDataFlag("deaths"), Colors.death,0.3)}
               <text x={4} fontSize={stateIDFontSize} alignmentBaseline="middle">
                 {curid}
               </text>

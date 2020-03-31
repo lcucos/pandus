@@ -11,6 +11,7 @@ import PageHeader from "./PageHeader.js";
 import PageFooter from "./PageFooter.js";
 import StatesTable from "./StatesTable.js"
 import ToggleButtonSummary from './ToggleButtonSummary.js';
+import TopCharts from './TopCharts.js';
 
 import allStates from "./data/maps/us/allstates.json";
 import statesGeo from "./data/maps/us/states-10m.json";
@@ -117,6 +118,7 @@ class App extends Component {
             <PageHeader           lastUpdate={this.summary} showFlags={this.showFlags}/>
             <ToggleButtonSummary  summary   ={this.summary} showFlags={this.showFlags}/>
             <MapChart             data      ={this.state.mapStatesByGeoId} showFlags={this.showFlags} statesGeo={this.statesGeo}/>
+            <TopCharts/>
             <StatesTable          prepData  ={this.state.arrStates}/>
             <PageFooter/>
             <p/> 
