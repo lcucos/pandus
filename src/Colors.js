@@ -1,5 +1,5 @@
 export const Colors = {
-    positive: '#cf7150',
+    positive: '#e73f0c',
     death: '#583333',
     hospitalized: '#0000CC',
     test: 'gray'

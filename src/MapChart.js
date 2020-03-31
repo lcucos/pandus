@@ -96,9 +96,9 @@ class MapChart extends React.Component {
           (Object.keys(offsets).indexOf(curid) === -1 ? (
             <Marker coordinates={centroid}>
               {this.showCircle(sizeT, this.getShowDataFlag("tests"), Colors.test,0.15)}
-              {this.showCircle(sizeC, this.getShowDataFlag("positives"), Colors.positive,0.35)}
+              {this.showCircle(sizeC, this.getShowDataFlag("positives"), Colors.positive,0.6)}
               {this.showCircle(sizeH, this.getShowDataFlag("hospitalized"), Colors.hospitalized,0.3)}
-              {this.showCircle(sizeD, this.getShowDataFlag("deaths"), Colors.death,0.3)}
+              {this.showCircle(sizeD, this.getShowDataFlag("deaths"), Colors.death,0.5)}
               <text y="2" fontSize={stateIDFontSize} textAnchor="middle">
                 {curid}
               </text>
@@ -110,9 +110,9 @@ class MapChart extends React.Component {
               dy={offsets[curid][1]}
             >
               {this.showCircle(sizeT, this.getShowDataFlag("tests"), Colors.test,0.15)}
-              {this.showCircle(sizeC, this.getShowDataFlag("positives"), Colors.positive,0.35)}
+              {this.showCircle(sizeC, this.getShowDataFlag("positives"), Colors.positive,0.6)}
               {this.showCircle(sizeH, this.getShowDataFlag("hospitalized"), Colors.hospitalized,0.3)}
-              {this.showCircle(sizeD, this.getShowDataFlag("deaths"), Colors.death,0.3)}
+              {this.showCircle(sizeD, this.getShowDataFlag("deaths"), Colors.death,0.5)}
               <text x={4} fontSize={stateIDFontSize} alignmentBaseline="middle">
                 {curid}
               </text>
