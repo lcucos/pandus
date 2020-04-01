@@ -7,14 +7,14 @@
 
 import React, { Component } from 'react'
 import MapChart from './MapChart.js'
-import PageHeader from "./PageHeader.js";
-import PageFooter from "./PageFooter.js";
+import PageHeader from "./PageHeader.js"
+import PageFooter from "./PageFooter.js"
 import StatesTable from "./StatesTable.js"
-import ToggleButtonSummary from './ToggleButtonSummary.js';
-import OverallCharts from './OverallCharts.js';
+import ToggleButtonSummary from './ToggleButtonSummary.js'
+import OverallCharts from './OverallCharts.js'
 
-import allStates from "./data/maps/us/allstates.json";
-import statesGeo from "./data/maps/us/states-10m.json";
+import allStates from "./data/maps/us/allstates.json"
+import statesGeo from "./data/maps/us/states-10m.json"
 import RegionsChart from "./RegionsCharts.js"
 
 class App extends Component {

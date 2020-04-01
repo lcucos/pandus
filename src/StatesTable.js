@@ -154,6 +154,7 @@ export default function StatesTable(data) {
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
 
   return (
+    <div>
     <div className={classes.root}>
       <Paper className={classes.paper}>
         <TableContainer>
@@ -215,6 +216,11 @@ export default function StatesTable(data) {
           onChangeRowsPerPage={handleChangeRowsPerPage}
         />
       </Paper>
+    </div>
+    <div align='left' className='recharts-cartesian-axis'>
+         <p>* July 2019 population estimate from <a href="https://en.wikipedia.org/wiki/List_of_states_and_territories_of_the_United_States_by_population">States and territories of the United States by population</a>
+         </p>
+        </div>
     </div>
   );
 }

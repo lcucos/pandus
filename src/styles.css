@@ -17,3 +17,8 @@
     font-size: 0.9rem;
     font-family: Roboto, sans-serif;
 }
+
+.center_right_left_container{
+    width:100%;
+    text-align:center
+}
