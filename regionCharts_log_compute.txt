@@ -1,0 +1,67 @@
+       //console.dir(data)
+        var statesData={}
+        var mapDays={}
+        for(var i=data.length-1;i>=0;i--){         
+            var date=new Date(data[i].dateChecked)
+            
+            const month = date.toLocaleString('default', { month: 'short' });
+            data[i].displayDate= month +"/"+ date.getUTCDate()
+
+            
+            var dayObj = mapDays[data[i].date]
+            
+            
+            if(dayObj=== undefined){
+                mapDays[data[i].date]=dayObj={
+                    displayDate: data[i].displayDate,
+                    count:0
+                }
+            }
+            //console.dir(data[i])
+            const stateID=data[i].state
+            var state=statesData[stateID]
+            
+            var prevValue = -1
+            
+            if(state === undefined){
+                if(data[i].death===null||data[i].death===0){
+                    continue;
+                }    
+                //console.log("Found first entry for: " + stateID +" : "+  data[i].death)
+                statesData[stateID]=state=[]
+            }else{
+                prevValue=state[state.length-1].value
+            }
+            //console.log(stateID+" : prevValue=" + prevValue)
+            if(prevValue===-1 || data[i].death/prevValue >= 2){
+                statesData[stateID].push({
+                    displayDate: data[i].displayDate,
+                    yVal :state.length+1,
+                    value: data[i].death
+                })
+               // dayObj[stateID]=state.length
+               // dayObj.count+=1
+            }      
+            
+            const stateTotalId=stateID+"_deaths"
+            const statePositiveId=stateID+"_positive"
+            if(dayObj[stateTotalId]===undefined){
+                dayObj[stateTotalId] = 0
+            }
+            if(dayObj[statePositiveId]===undefined){
+                dayObj[statePositiveId] = 0
+            }
+            dayObj[stateTotalId]+=data[i].death
+            dayObj[statePositiveId]+=data[i].positive
+        }
+        const arrDays=[]
+        for (var key in mapDays) {
+            if (mapDays.hasOwnProperty(key)) {
+                arrDays.push(mapDays[key])
+            }
+        }
+        //console.dir(arrDays)
+        this.setState({
+            arrDays:arrDays
+        })
+     }

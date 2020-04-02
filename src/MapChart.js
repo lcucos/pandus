@@ -124,7 +124,10 @@ class MapChart extends React.Component {
    
   render() {
     return (
-      <svg width={1200} height={760}>
+      <div>
+      <p style={{paddingBottom:'2px'}}/>
+
+      <svg width={1280} height={760}>
       <ComposableMap projection="geoAlbersUsa">
         <Geographies geography={this.statesGeo}>
           {({ geographies }) => (
@@ -155,6 +158,7 @@ class MapChart extends React.Component {
         </Geographies>
       </ComposableMap>
       </svg>
+      </div>
     );
   }
 };

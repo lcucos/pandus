@@ -12,14 +12,14 @@ import './styles.css';
 
     constructor(props) {
        super(props);
-       this.summary = props.lastUpdate
+       this.summary = props.summary
     }
 
     render(){
        return (
         <div>
         <div align='left'>
-          <h1>Covid19 status in U.S.</h1>
+          <h1>Covid19 Status : USA</h1>
         </div>  
         <div align='left' className="StylesParagraph">
           Community project sponsored by <a href="https://www.myroadtime.com">MyRoadTime</a>  using data from <a href="https://covidtracking.com/">The COVID Tracking Project</a>. 

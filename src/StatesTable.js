@@ -48,17 +48,19 @@ function stableSort(array, comparator) {
   return stabilizedThis.map(el => el[0]);
 }
 
+//{ id: 'percentDeaths', numeric: true, disablePadding: false, label: '% from Total Deaths' },
 const headCells = [
   { id: 'stateName', numeric: false, disablePadding: true, label: 'State' },
   { id: 'population', numeric: true, disablePadding: false, label: 'Population*' },
   { id: 'tested', numeric: true, disablePadding: false, label: 'Tests' },
   { id: 'positive', numeric: true, disablePadding: false, label: 'Positive' },
+  { id: 'percentPositiveFromTests', numeric: true, disablePadding: false, label: "Positive % of_Tests" },
   { id: 'deaths', numeric: true, disablePadding: false, label: 'Deaths' },
   { id: 'hospitalized', numeric: true, disablePadding: false, label: 'Hospitalized' },
-  { id: 'testsByUnit', numeric: true, disablePadding: false, label: 'Tests per_1_mil' },
-  { id: 'positivesByUnit', numeric: true, disablePadding: false, label: 'Positive per_1_mil' },
-  { id: 'deathsByUnit', numeric: true, disablePadding: false, label: 'Deaths per_1_mil' },
-  { id: 'lastUpdated', numeric: true, disablePadding: false, label: 'Last update' },
+  { id: 'testsByUnit', numeric: true, disablePadding: false, label: 'Tests @_1_mil' },
+  { id: 'positivesByUnit', numeric: true, disablePadding: false, label: 'Positive @_1_mil' },
+  { id: 'deathsByUnit', numeric: true, disablePadding: false, label: 'Deaths @_1_mil' },
+  { id: 'lastUpdated', numeric: true, disablePadding: false, label: 'Last Update' },
 ];
 
 function EnhancedTableHead(props) {
@@ -128,6 +130,8 @@ const useStyles = makeStyles(theme => ({
 
 export default function StatesTable(data) {
   const rows=data.prepData
+  const summary=data.summary
+
   const classes = useStyles();
   const [order, setOrder] = React.useState('desc');
   const [orderBy, setOrderBy] = React.useState('positive');
@@ -153,7 +157,8 @@ export default function StatesTable(data) {
 
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
 
-  return (
+    //   <TableCell align="right">{(row.percentDeaths*100).toFixed(2)+" %"}</TableCell>
+    return (
     <div>
     <div className={classes.root}>
       <Paper className={classes.paper}>
@@ -189,6 +194,7 @@ export default function StatesTable(data) {
                       <TableCell align="right">{Number(row.population).toLocaleString()}</TableCell>
                       <TableCell align="right">{Number(row.tested).toLocaleString()}</TableCell>
                       <TableCell align="right">{Number(row.positive).toLocaleString()}</TableCell>
+                      <TableCell align="right">{(row.percentPositiveFromTests*100).toFixed(2)+" %"}</TableCell>
                       <TableCell align="right">{Number(row.deaths).toLocaleString()}</TableCell>
                       <TableCell align="right">{(row.hospitalized==null?"NA":Number(row.hospitalized).toLocaleString())}</TableCell>
                       <TableCell align="right">{Number(row.testsByUnit).toLocaleString()}</TableCell>

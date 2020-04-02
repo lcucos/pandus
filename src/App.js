@@ -16,6 +16,7 @@ import OverallCharts from './OverallCharts.js'
 import allStates from "./data/maps/us/allstates.json"
 import statesGeo from "./data/maps/us/states-10m.json"
 import RegionsChart from "./RegionsCharts.js"
+import PieChartSummary from './PieChartSummary.js'
 
 class App extends Component {
 
@@ -25,6 +26,7 @@ class App extends Component {
       this.state = {
         arrStates:[],
         mapStatesByGeoId:{},
+        mapStatesByStateCode:{},
         isLoading: false,
         error: null,
       };
@@ -47,15 +49,20 @@ class App extends Component {
       var valMap={};
       var arrStates = []
       var mapStatesByGeoId = {}
+      var totPopulation = 0
+      var mapStatesByStateCode = {}
       for (var i = 0; i < allStates.length; i++) {
          idsMap[allStates[i].id] = allStates[i];
          valMap[allStates[i].val] = allStates[i];
+         totPopulation+=allStates[i].population
       }
       var statesStatus = data
       this.summary.positives =0
       this.summary.deaths =0
       this.summary.tests =0
       this.summary.hospitalized =0
+      this.summary.totPopulation=totPopulation
+      console.log(totPopulation)
       for (i = 0; i < statesStatus.length; i++) {
          var stateObj = idsMap[statesStatus[i].state]
          // compute summaries
@@ -72,19 +79,27 @@ class App extends Component {
             stateCode:stateObj.id,
             population:stateObj.population,
             color:stateObj.color,
-            tested:statesStatus[i].total,
+            tested:statesStatus[i].totalTestResults,
             deaths:statesStatus[i].death,
             hospitalized:statesStatus[i].hospitalized,
             testsByUnit:Math.round(statesStatus[i].total*1000000/stateObj.population),
             positive:statesStatus[i].positive,
             positivesByUnit:Math.round(statesStatus[i].positive*1000000/stateObj.population),
             deathsByUnit:Math.round(statesStatus[i].death*1000000/stateObj.population),
-            lastUpdated:statesStatus[i].lastUpdateEt            
+            lastUpdated:statesStatus[i].lastUpdateEt,
+            percentPositiveFromTests:statesStatus[i].positive/statesStatus[i].totalTestResults,
+            percentDeaths:0
          }
          mapStatesByGeoId[stateObj.val]=obj;
+         mapStatesByStateCode[stateObj.id]=obj;
          arrStates.push(obj)
       }
-      this.setState({arrStates:arrStates,mapStatesByGeoId:mapStatesByGeoId,isLoading:false})
+      // compute percent of totals
+      for (i = 0; i < arrStates.length; i++) {
+         arrStates[i].percentDeaths=arrStates[i].deaths/this.summary.deaths
+      }
+      
+      this.setState({arrStates:arrStates,mapStatesByGeoId:mapStatesByGeoId,mapStatesByStateCode:mapStatesByStateCode,isLoading:false})
    }
 
    componentDidMount() {
@@ -116,13 +131,14 @@ class App extends Component {
       }
       return ( 
          <center>
-         <div style = {{ width: '1200px' }} >
-            <PageHeader           lastUpdate={this.summary} showFlags={this.showFlags}/>
-            <ToggleButtonSummary  summary   ={this.summary} showFlags={this.showFlags}/>
-            <MapChart             data      ={this.state.mapStatesByGeoId} showFlags={this.showFlags} statesGeo={this.statesGeo}/>
+         <div style = {{ width: '1280px' }} >
+            <PageHeader           summary  = {this.summary} showFlags={this.showFlags}/>
+            <ToggleButtonSummary  summary  = {this.summary} showFlags={this.showFlags}/>
+            <MapChart             data     = {this.state.mapStatesByGeoId} showFlags={this.showFlags} statesGeo={this.statesGeo}/>
             <OverallCharts/>
-            <StatesTable          prepData  ={this.state.arrStates}/>
-            <RegionsChart         prepData  ={this.state.arrStates}/>
+            <StatesTable          prepData = {this.state.arrStates} summary ={this.summary}/>
+            <PieChartSummary      prepData = {this.state.arrStates} mapStateData={this.state.mapStatesByStateCode} summary  = {this.summary}/>
+            <RegionsChart         prepData = {this.state.arrStates}/>
             <PageFooter/>
             <p/> 
          </div>
