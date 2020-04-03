@@ -6,7 +6,7 @@
  */
 
 import React, { Component } from 'react'
-import {PieChart, Pie, Cell} from 'recharts';
+import {PieChart, Pie, Cell, Tooltip} from 'recharts';
 import './styles.css';
 import {exponentialClustering} from './Utils.js'
 
@@ -19,7 +19,7 @@ class SimplePieChart extends Component{
         super(props);
         this.state = {
             data:props.data,
-            key:props.key
+            key:props.dataKey
         }
     }
 
@@ -28,12 +28,15 @@ class SimplePieChart extends Component{
         const x  = cx + radius * Math.cos(-midAngle * RADIAN);
         const y = cy  + radius * Math.sin(-midAngle * RADIAN);
         
-        const radius2 = outerRadius + (outerRadius - innerRadius) * 0.3;
+        const radius2 = outerRadius + (outerRadius - innerRadius) * 0.5;
         const x2  = cx + radius2 * Math.cos(-midAngle * RADIAN);
         const y2 = cy  + radius2 * Math.sin(-midAngle * RADIAN);
-    
+        
         return (
-        <g className='recharts-cartesian-axis'>            
+        <g className='recharts-cartesian-axis'>
+        <text x={cx} y={cy} dominantBaseline="central" textAnchor="middle">
+            {this.state.key}
+        </text>            
         <text x={x2} y={y2} fill="black" textAnchor={x > cx ? 'start' : 'end'} 	dominantBaseline="central">
             {`${(percent * 100).toFixed(1)}% : ` + this.state.data[index].name}
         </text>
@@ -53,11 +56,13 @@ class SimplePieChart extends Component{
             label={this.renderCustomizedLabel}
             outerRadius={100} 
             fill="#8884d8"
+            innerRadius={50}            
             >
             {
                 this.state.data.map((entry, index) => <Cell fill={COLORS[index % COLORS.length]} key={"key:"+this.state.key}/>)
-            }
+            }              
             </Pie>
+            <Tooltip/>
         </PieChart>
         );
   }
@@ -127,20 +132,13 @@ class PieChartSummary extends Component{
 
     render () {
         return (
-            <div>
+            <div>                
                 <p style={{paddingBottom:'10px'}}/>
+                <b>Current Distribution by State</b>
             <div className='row-components'> 
             
-            <div className='recharts-cartesian-axis'>
-                Positive
-                <p/>
-            <SimplePieChart data={this.state.dataPositives} dataKey={'1'}/>
-            </div>
-            <div className='recharts-cartesian-axis'>
-                Deaths
-                <p/>
-            <SimplePieChart data={this.state.dataDeaths} dataKey={'2'}/>
-            </div>
+            <SimplePieChart data={this.state.dataPositives } dataKey={'Positive'}/>
+            <SimplePieChart data={this.state.dataDeaths} dataKey={'Deaths'}/>
             </div>
             </div>
         );
