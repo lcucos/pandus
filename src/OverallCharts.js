@@ -74,8 +74,7 @@ export default  class OverallCharts extends Component{
             </defs>
             <XAxis dataKey="displayDate"/>
             <YAxis tickFormatter={this.formatYAxis}/>
-            <Tooltip>
-            </Tooltip>
+            <Tooltip formatter={(value) => new Intl.NumberFormat('en').format(value)} />
             <Legend />
             <Area type="monotone" dataKey={yKey} name={yLabel} stroke={color} fillOpacity={1} fill={fillColor}/>
            </AreaChart>
@@ -97,8 +96,7 @@ export default  class OverallCharts extends Component{
                 >
                 <XAxis dataKey="displayDate"/>
                 <YAxis tickFormatter={this.formatYAxis}/>
-                <Tooltip>
-                </Tooltip>
+                <Tooltip formatter={(value) => new Intl.NumberFormat('en').format(value)} />
                 <Legend />
                 <Line type="monotone" dataKey={yKey} name={yLabel} stroke={color} dot={false} strokeWidth={3}/>
             </LineChart>

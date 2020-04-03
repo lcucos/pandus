@@ -79,14 +79,16 @@ class MapChart extends React.Component {
     const curid = element.stateCode; 
 
     var sizeC=(element? element.positive:0)
-    var sizeT=(element? element.tested:0)
+    //var sizeT=(element? element.tested:0)
     var sizeH=(element? element.hospitalized:0)
     var sizeD=(element? element.deaths:0)
 
     sizeC = radiusPerUnit * Math.sqrt(sizeC/unitSize)
-    sizeT = radiusPerUnit * Math.sqrt(sizeT/unitSize)
+  //  sizeT = radiusPerUnit * Math.sqrt(sizeT/unitSize)
     sizeH = radiusPerUnit * Math.sqrt(sizeH/unitSize)
     sizeD = radiusPerUnit * Math.sqrt(sizeD/unitSize)
+//              {this.showCircle(sizeT, this.getShowDataFlag("tests"), Colors.test,0.15)}
+//{this.showCircle(sizeT, this.getShowDataFlag("tests"), Colors.test,0.15)}
 
     return (
       <g key={geo.rsmKey + "-name"}>
@@ -95,7 +97,6 @@ class MapChart extends React.Component {
           centroid[0] < -67 &&
           (Object.keys(offsets).indexOf(curid) === -1 ? (
             <Marker coordinates={centroid}>
-              {this.showCircle(sizeT, this.getShowDataFlag("tests"), Colors.test,0.15)}
               {this.showCircle(sizeC, this.getShowDataFlag("positives"), Colors.positive,0.6)}
               {this.showCircle(sizeH, this.getShowDataFlag("hospitalized"), Colors.hospitalized,0.3)}
               {this.showCircle(sizeD, this.getShowDataFlag("deaths"), Colors.death,0.5)}
@@ -109,7 +110,6 @@ class MapChart extends React.Component {
               dx={offsets[curid][0]}
               dy={offsets[curid][1]}
             >
-              {this.showCircle(sizeT, this.getShowDataFlag("tests"), Colors.test,0.15)}
               {this.showCircle(sizeC, this.getShowDataFlag("positives"), Colors.positive,0.6)}
               {this.showCircle(sizeH, this.getShowDataFlag("hospitalized"), Colors.hospitalized,0.3)}
               {this.showCircle(sizeD, this.getShowDataFlag("deaths"), Colors.death,0.5)}
@@ -121,7 +121,15 @@ class MapChart extends React.Component {
       </g>
     );
   }
-   
+
+  getStateColor(geo){
+    var element = this.allData[geo.id];
+    if(element === undefined || this.getShowDataFlag("tests") === false){
+      return '#f7f7f7'
+    }
+    return element.testColor
+  }
+  
   render() {
     return (
       <div>
@@ -138,7 +146,7 @@ class MapChart extends React.Component {
                   geography={geo}
                   style={{
                     default: {
-                      fill: '#f7f7f7',
+                      fill: this.getStateColor(geo),
                       stroke: '#607D8B',
                       strokeWidth: 0.75,
                       outline: 'none'

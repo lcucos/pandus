@@ -40,7 +40,7 @@ class App extends Component {
       this.statesGeo = statesGeo
       // set default data view flags
       // possible options: "tests","positives","hospitalized","deaths"
-      this.showFlags=["positives", "deaths"];
+      this.showFlags=["positives", "tests"];
    }
   
    preapreData(data){
@@ -73,6 +73,7 @@ class App extends Component {
          this.summary.deaths+=statesStatus[i].death
          this.summary.tests+=statesStatus[i].total
          this.summary.hospitalized+=statesStatus[i].hospitalized
+
          // prepare object
          var obj = {
             stateName:stateObj.name,
@@ -90,6 +91,9 @@ class App extends Component {
             percentPositiveFromTests:statesStatus[i].positive/statesStatus[i].totalTestResults,
             percentDeaths:0
          }
+         var v1 =  (256-Math.ceil(256*obj.testsByUnit/30000)).toString(16)
+         obj.testColor = "#"+v1+v1+v1
+         
          mapStatesByGeoId[stateObj.val]=obj;
          mapStatesByStateCode[stateObj.id]=obj;
          arrStates.push(obj)

@@ -13,6 +13,16 @@ import {exponentialClustering} from './Utils.js'
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884bc', '#c9af95','#be4401','#7e793f','#f05bb5',];
 const RADIAN = Math.PI / 180;    
 
+function MyCustomTooltip (tooltipProps) {
+    if(tooltipProps.payload.length ===0){
+        return
+    }
+    var text = tooltipProps.payload[0].name + " : " + Number(tooltipProps.payload[0].value).toLocaleString()
+    return <div className='recharts-cartesian-axis' style={{backgroundColor:'white',padding: '12px', borderColor: 'lightgray', borderStyle: 'solid',borderWidth: '1px'}} >
+        {text}
+        </div>
+}
+
 class SimplePieChart extends Component{
 
     constructor(props) {
@@ -26,7 +36,6 @@ class SimplePieChart extends Component{
     renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent, index }) => {
         const radius = innerRadius + (outerRadius - innerRadius) * 0.7;
         const x  = cx + radius * Math.cos(-midAngle * RADIAN);
-        const y = cy  + radius * Math.sin(-midAngle * RADIAN);
         
         const radius2 = outerRadius + (outerRadius - innerRadius) * 0.5;
         const x2  = cx + radius2 * Math.cos(-midAngle * RADIAN);
@@ -46,7 +55,7 @@ class SimplePieChart extends Component{
         
     render () {
         return (
-            <PieChart width={640} height={350} onMouseEnter={this.onPieEnter}>
+           <PieChart width={640} height={350} onMouseEnter={this.onPieEnter}>
             <Pie
             data={this.state.data} 
             cx={320} 
@@ -62,7 +71,7 @@ class SimplePieChart extends Component{
                 this.state.data.map((entry, index) => <Cell fill={COLORS[index % COLORS.length]} key={"key:"+this.state.key}/>)
             }              
             </Pie>
-            <Tooltip/>
+            <Tooltip content={MyCustomTooltip} cursor={{ fill: 'rgba(206, 206, 206, 0.2)' }}/>
         </PieChart>
         );
   }
