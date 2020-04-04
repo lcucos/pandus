@@ -15,6 +15,7 @@ import {
   Annotation
 } from "react-simple-maps";
 import {Colors} from './Colors.js'
+import ReactTooltip from "react-tooltip";
 
 const offsets = {
   VT: [90, -50],
@@ -27,21 +28,27 @@ const offsets = {
   MD: [60, 40],
   DC: [70, 71]
 };
+
 const radiusPerUnit = 1;
-const unitSize = 10;
+const unitSize = 20;
 
 export function  updateTests(data){
   this.setState({showFlags:this.setUIFlags(data)})  
 }
 
 class MapChart extends React.Component {
+  width=1040
+  height=660
+  legendX=740
+  legendY=520
+  colorBorder="#607D8B"
 
   constructor(props){
     super(props);
 
     this.allData = props.data
     this.statesGeo = props.statesGeo
-
+    this.summary = props.summary
     this.state={
       showFlags:this.setUIFlags(props.showFlags)
     } 
@@ -67,6 +74,14 @@ class MapChart extends React.Component {
     return this.state.showFlags[type]!== undefined
   }
 
+  getMaxRadius(sizeC, sizeH, sizeD){
+    var c =(this.state.showFlags["positives"] === undefined ? 0: sizeC)
+    var h =(this.state.showFlags["hospitalized"] === undefined ? 0: sizeH)
+    var d =(this.state.showFlags["deaths"] === undefined ? 0: sizeD)
+    var maxR = c>h?c:h
+    return maxR > d ? maxR : d
+  }
+
   // render state info
   stateNamesFunc(geo){
     var stateIDFontSize=12;
@@ -84,11 +99,13 @@ class MapChart extends React.Component {
     var sizeD=(element? element.deaths:0)
 
     sizeC = radiusPerUnit * Math.sqrt(sizeC/unitSize)
-  //  sizeT = radiusPerUnit * Math.sqrt(sizeT/unitSize)
+    //sizeT = radiusPerUnit * Math.sqrt(sizeT/unitSize)
     sizeH = radiusPerUnit * Math.sqrt(sizeH/unitSize)
     sizeD = radiusPerUnit * Math.sqrt(sizeD/unitSize)
-//              {this.showCircle(sizeT, this.getShowDataFlag("tests"), Colors.test,0.15)}
-//{this.showCircle(sizeT, this.getShowDataFlag("tests"), Colors.test,0.15)}
+    //{this.showCircle(sizeT, this.getShowDataFlag("tests"), Colors.test,0.15)}
+    //{this.showCircle(sizeT, this.getShowDataFlag("tests"), Colors.test,0.15)}
+    var maxRadius = sizeC > sizeH?sizeC : sizeH
+    var textOffsetY = -1*this.getMaxRadius(sizeC, sizeH, sizeD) - 3
 
     return (
       <g key={geo.rsmKey + "-name"}>
@@ -99,8 +116,8 @@ class MapChart extends React.Component {
             <Marker coordinates={centroid}>
               {this.showCircle(sizeC, this.getShowDataFlag("positives"), Colors.positive,0.6)}
               {this.showCircle(sizeH, this.getShowDataFlag("hospitalized"), Colors.hospitalized,0.3)}
-              {this.showCircle(sizeD, this.getShowDataFlag("deaths"), Colors.death,0.5)}
-              <text y="2" fontSize={stateIDFontSize} textAnchor="middle">
+              {this.showCircle(sizeD, this.getShowDataFlag("deaths"), Colors.death,0.7)}
+              <text y="2" dy={textOffsetY} fontSize={stateIDFontSize} textAnchor="middle">
                 {curid}
               </text>
             </Marker>
@@ -112,8 +129,8 @@ class MapChart extends React.Component {
             >
               {this.showCircle(sizeC, this.getShowDataFlag("positives"), Colors.positive,0.6)}
               {this.showCircle(sizeH, this.getShowDataFlag("hospitalized"), Colors.hospitalized,0.3)}
-              {this.showCircle(sizeD, this.getShowDataFlag("deaths"), Colors.death,0.5)}
-              <text x={4} fontSize={stateIDFontSize} alignmentBaseline="middle">
+              {this.showCircle(sizeD, this.getShowDataFlag("deaths"), Colors.death,0.7)}
+              <text y="2" dy={textOffsetY} fontSize={stateIDFontSize} textAnchor="middle">
                 {curid}
               </text>
             </Annotation>
@@ -129,13 +146,60 @@ class MapChart extends React.Component {
     }
     return element.testColor
   }
-  
+
+  drawLegendCircle(){
+    if(!this.getShowDataFlag("positives") && !this.getShowDataFlag("hospitalized") && !this.getShowDataFlag("deaths"))
+    {
+      return
+    }
+    var people = 1000
+    var sizeT = radiusPerUnit * Math.sqrt(people/unitSize)
+    var color = Colors.positive
+    var opacity = 0.6
+    var sY = this.legendY - 15
+    var sX = this.legendX + sizeT
+    return (
+      <g className='recharts-cartesian-axis' style={{fontSize: '0.6rem', fill:'gray'}}>
+      <circle cx={sX} cy={sY} r={sizeT} stroke={this.colorBorder} strokeWidth="2" fill="none"/>)
+      <text x={sX + sizeT*1.5} y={sY} dominantBaseline="central" textAnchor="left">
+      {Number(people).toLocaleString()}
+      </text>   
+      </g>
+      )
+  }
+  drawLegendTests(){
+    if(! this.getShowDataFlag("tests")){
+      return
+    }
+    var sX = this.legendX
+    var sY = this.legendY
+    const testingGradientColor="url(#testingColor)"
+    const color=this.summary.maxTestsColor
+    return(
+      <g className='recharts-cartesian-axis' style={{fontSize: '0.6rem', fill:'gray'}}>
+      <defs>
+          <linearGradient id="testingColor" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor={color} stopOpacity={1}/>
+          <stop offset="100%" stopColor={color} stopOpacity={0}/>
+          </linearGradient>
+      </defs>
+      <text x={sX+85} y={sY+13} dominantBaseline="central" textAnchor="left">
+      @ 1 Mil
+      </text>   
+      <text x={sX} y={sY+25} dominantBaseline="central" textAnchor="left">
+      {Number(this.summary.maxTestsScale).toLocaleString()}
+      </text>   
+      <text x={sX+80} y={sY+25} dominantBaseline="central" textAnchor="middle">0</text> 
+      <rect width="80" height="10" x={sX} y={sY + 8} fillOpacity={1} fill={testingGradientColor} strokeWidth="1" stroke={this.colorBorder}/>
+      </g>
+    )
+  }
   render() {
     return (
       <div>
       <p style={{paddingBottom:'2px'}}/>
 
-      <svg width={1280} height={760}>
+      <svg width={this.width} height={this.height}>
       <ComposableMap projection="geoAlbersUsa">
         <Geographies geography={this.statesGeo}>
           {({ geographies }) => (
@@ -147,11 +211,17 @@ class MapChart extends React.Component {
                   style={{
                     default: {
                       fill: this.getStateColor(geo),
-                      stroke: '#607D8B',
+                      stroke:'#607D8B',
                       strokeWidth: 0.75,
                       outline: 'none'
                     },
                     hover: {
+                      fill: '#f7f7f7',
+                      stroke: '#607D8B',
+                      strokeWidth: 0.75,
+                      outline: 'none'
+                    },
+                    pressed: {
                       fill: '#f7f7f7',
                       stroke: '#607D8B',
                       strokeWidth: 0.75,
@@ -161,6 +231,8 @@ class MapChart extends React.Component {
                   />
               ))}
               {geographies.map(geo=>(this.stateNamesFunc(geo)))}
+              {this.drawLegendCircle()}
+              {this.drawLegendTests()}
             </>
           )}
         </Geographies>

@@ -50,16 +50,21 @@ export default function ToggleButtonSummary(data) {
        updateTests(newAlignment)
     };
     const children = [
-        createButton(1,"tests",Colors.test,summary.tests,(summary.tests*100/summary.totPopulation).toFixed(2) + " % (of population)","Tests", Math.ceil(summary.tests*1000000/summary.totPopulation) + " @ 1 Mil"),
+        createButton(1,"tests",Colors.test,summary.tests,
+            (summary.tests*100/summary.totPopulation).toFixed(2) + " % (of population)",
+            "Tests", 
+            Number(Math.ceil(summary.tests*1000000/summary.totPopulation)).toLocaleString() + " @ 1 Mil"),
         createButton(2,"positives",Colors.positive,summary.positives,
-        (summary.positives/summary.tests*100).toFixed(2) + " % (of tests)",
-        "Positives",Math.ceil(summary.positives*1000000/summary.totPopulation) + " @ 1 Mil"),
+            (summary.positives/summary.tests*100).toFixed(2) + " % (of tests)",
+            "Positives",
+            Number(Math.ceil(summary.positives*1000000/summary.totPopulation)).toLocaleString() + " @ 1 Mil"),
         createButton(3,"hospitalized",Colors.hospitalized,summary.hospitalized,
-        (summary.hospitalized/summary.positives*100).toFixed(2) + " % (of positives)",
-        "Hospitalized", Math.ceil(summary.hospitalized*1000000/summary.totPopulation) + " @ 1 Mil"),
+            (summary.hospitalized/summary.positives*100).toFixed(2) + " % (of positives)",
+            "Hospitalized", Math.ceil(summary.hospitalized*1000000/summary.totPopulation) + " @ 1 Mil"),
         createButton(4,"deaths",Colors.death,summary.deaths,
-        (summary.deaths/summary.positives*100).toFixed(2) + " % (of positives)",
-        "Deaths", Math.ceil(summary.deaths*1000000/summary.totPopulation) + "  @ 1 Mil")
+            (summary.deaths/summary.positives*100).toFixed(2) + " % (of positives)",
+            "Deaths", 
+            Math.ceil(summary.deaths*1000000/summary.totPopulation) + "  @ 1 Mil")
     ];
     return (
       <div>

@@ -18,10 +18,11 @@ import './styles.css';
     render(){
        return (
         <div>
-        <div align='left'>
-          <h1>Covid19 Status : USA</h1>
+        <div align='center'>
+          <h1>Covid19 Status</h1>
+          <h1>USA</h1>
         </div>  
-        <div align='left' className="StylesParagraph">
+        <div align='center' className="StylesParagraph">
           Community project sponsored by <a href="https://www.myroadtime.com">MyRoadTime</a>  using data from <a href="https://covidtracking.com/">The COVID Tracking Project</a>. 
           Please click <a href="https://covidtracking.com/about-tracker/">here</a> for important information regarding data accuracy and recency.
           <p/>

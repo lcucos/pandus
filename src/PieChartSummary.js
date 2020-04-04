@@ -24,6 +24,7 @@ function MyCustomTooltip (tooltipProps) {
 }
 
 class SimplePieChart extends Component{
+    renderedLabel=false
 
     constructor(props) {
         super(props);
@@ -33,6 +34,17 @@ class SimplePieChart extends Component{
         }
     }
 
+    renderCenterLabel(cx, cy){
+        if(this.renderedLabel){
+            return
+        }
+        this.renderedLabel = true
+        return(
+        <text x={cx} y={cy} dominantBaseline="central" textAnchor="middle">
+            {this.state.key}
+        </text>
+        )            
+    }
     renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent, index }) => {
         const radius = innerRadius + (outerRadius - innerRadius) * 0.7;
         const x  = cx + radius * Math.cos(-midAngle * RADIAN);
@@ -43,9 +55,7 @@ class SimplePieChart extends Component{
         
         return (
         <g className='recharts-cartesian-axis'>
-        <text x={cx} y={cy} dominantBaseline="central" textAnchor="middle">
-            {this.state.key}
-        </text>            
+        {this.renderCenterLabel(cx,cy)}
         <text x={x2} y={y2} fill="black" textAnchor={x > cx ? 'start' : 'end'} 	dominantBaseline="central">
             {`${(percent * 100).toFixed(1)}% : ` + this.state.data[index].name}
         </text>
@@ -65,7 +75,8 @@ class SimplePieChart extends Component{
             label={this.renderCustomizedLabel}
             outerRadius={100} 
             fill="#8884d8"
-            innerRadius={50}            
+            innerRadius={50}          
+            isAnimationActive={false}  
             >
             {
                 this.state.data.map((entry, index) => <Cell fill={COLORS[index % COLORS.length]} key={"key:"+this.state.key}/>)
