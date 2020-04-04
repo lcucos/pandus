@@ -2,6 +2,8 @@ export const Colors = {
     positive: '#e73f0c',
     death: '#583333',
     hospitalized: '#0000CC',
-    test: 'gray'
+    test: 'gray',
+    mapBorder:'#607D8B',
+    mapDefault:'#f7f7f7'
 }
 

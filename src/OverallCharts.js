@@ -92,6 +92,7 @@ export default  class OverallCharts extends Component{
                 width={this.chartWidth}            
                 height={height}
                 data={this.state.rawData}
+                isAnimationActive={false}  
                 margin={{top: 10, right: 30, left: 20, bottom: 5}}
                 >
                 <XAxis dataKey="displayDate"/>
@@ -109,7 +110,7 @@ export default  class OverallCharts extends Component{
         const chartHeightPerDay = 200
         return (
             <div>
-            <b>Evolution Nationwide</b>
+            <b>Nationwide Progression</b>
 
             <div className='row-components'>            
             {this.lineChart(Colors.positive, "positive", "Total", chartHeightTotals, "Positive")}

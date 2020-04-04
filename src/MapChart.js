@@ -29,6 +29,16 @@ const offsets = {
   DC: [70, 71]
 };
 
+const rounded = num => {
+  if (num > 1000000000) {
+    return Math.round(num / 100000000) / 10 + "Bn";
+  } else if (num > 1000000) {
+    return Math.round(num / 100000) / 10 + "M";
+  } else {
+    return Math.round(num / 100) / 10 + "K";
+  }
+};
+
 const radiusPerUnit = 1;
 const unitSize = 20;
 
@@ -36,12 +46,13 @@ export function  updateTests(data){
   this.setState({showFlags:this.setUIFlags(data)})  
 }
 
+
 class MapChart extends React.Component {
   width=1040
   height=660
   legendX=740
   legendY=520
-  colorBorder="#607D8B"
+
 
   constructor(props){
     super(props);
@@ -50,7 +61,8 @@ class MapChart extends React.Component {
     this.statesGeo = props.statesGeo
     this.summary = props.summary
     this.state={
-      showFlags:this.setUIFlags(props.showFlags)
+      showFlags:this.setUIFlags(props.showFlags),
+      tooltipContent:""
     } 
   }
 
@@ -80,6 +92,30 @@ class MapChart extends React.Component {
     var d =(this.state.showFlags["deaths"] === undefined ? 0: sizeD)
     var maxR = c>h?c:h
     return maxR > d ? maxR : d
+  }
+
+  getTooltipContent(geoId){
+    if(!!geoId === false){
+      return
+    }
+    var el = this.allData[geoId]
+    return (
+      <div>
+      <strong>{el.stateName}</strong>
+      <br/>
+        ({Number(el.population).toLocaleString()})
+      <div className="grid_container_map_tooltip">
+        <div align='left'>Tests</div> 
+        <div align='center'>{Number(el.tested).toLocaleString()}</div>
+        <div align='left'>Positives</div> 
+        <div align='center'>{Number(el.positive).toLocaleString()}</div>
+        <div align='left'>Hospitalized</div>
+        <div align='center'> {(!!el.hospitalized?Number(el.hospitalized).toLocaleString() :"NA")} </div>
+        <div align='left'>Deaths</div>
+        <div align='center'> {Number(el.deaths).toLocaleString()} </div>
+      </div>
+      </div>
+      )
   }
 
   // render state info
@@ -154,13 +190,11 @@ class MapChart extends React.Component {
     }
     var people = 1000
     var sizeT = radiusPerUnit * Math.sqrt(people/unitSize)
-    var color = Colors.positive
-    var opacity = 0.6
     var sY = this.legendY - 15
     var sX = this.legendX + sizeT
     return (
       <g className='recharts-cartesian-axis' style={{fontSize: '0.6rem', fill:'gray'}}>
-      <circle cx={sX} cy={sY} r={sizeT} stroke={this.colorBorder} strokeWidth="2" fill="none"/>)
+      <circle cx={sX} cy={sY} r={sizeT} stroke={Colors.mapBorder} strokeWidth="2" fill="none"/>)
       <text x={sX + sizeT*1.5} y={sY} dominantBaseline="central" textAnchor="left">
       {Number(people).toLocaleString()}
       </text>   
@@ -190,7 +224,7 @@ class MapChart extends React.Component {
       {Number(this.summary.maxTestsScale).toLocaleString()}
       </text>   
       <text x={sX+80} y={sY+25} dominantBaseline="central" textAnchor="middle">0</text> 
-      <rect width="80" height="10" x={sX} y={sY + 8} fillOpacity={1} fill={testingGradientColor} strokeWidth="1" stroke={this.colorBorder}/>
+      <rect width="80" height="10" x={sX} y={sY + 8} fillOpacity={1} fill={testingGradientColor} strokeWidth="1" stroke='lightgray'/>
       </g>
     )
   }
@@ -200,7 +234,7 @@ class MapChart extends React.Component {
       <p style={{paddingBottom:'2px'}}/>
 
       <svg width={this.width} height={this.height}>
-      <ComposableMap projection="geoAlbersUsa">
+      <ComposableMap data-tip=""  projection="geoAlbersUsa">
         <Geographies geography={this.statesGeo}>
           {({ geographies }) => (
             <>
@@ -211,19 +245,7 @@ class MapChart extends React.Component {
                   style={{
                     default: {
                       fill: this.getStateColor(geo),
-                      stroke:'#607D8B',
-                      strokeWidth: 0.75,
-                      outline: 'none'
-                    },
-                    hover: {
-                      fill: '#f7f7f7',
-                      stroke: '#607D8B',
-                      strokeWidth: 0.75,
-                      outline: 'none'
-                    },
-                    pressed: {
-                      fill: '#f7f7f7',
-                      stroke: '#607D8B',
+                      stroke:Colors.mapBorder,
                       strokeWidth: 0.75,
                       outline: 'none'
                     }
@@ -233,11 +255,50 @@ class MapChart extends React.Component {
               {geographies.map(geo=>(this.stateNamesFunc(geo)))}
               {this.drawLegendCircle()}
               {this.drawLegendTests()}
+              {geographies.map(geo => (
+                <Geography
+                  key={geo.rsmKey}
+                  geography={geo}
+                  onMouseEnter={() => {
+                    this.setState({tooltipContent:geo.id})
+                  }}
+                  onMouseLeave={() => {
+                    this.setState({tooltipContent:""});
+                  }}
+                  style={{
+                    default: {
+                      fillOpacity:0,
+                      outline: 'none'
+                    },
+                    hover: {
+                      fill: Colors.mapDefault,
+                      stroke: Colors.mapBorder,
+                      fillOpacity:0.3,
+                      strokeWidth: 0.75,
+                      outline: 'none'
+                    },
+                    pressed: {
+                      fill: Colors.mapDefault,
+                      stroke: Colors.mapBorder,
+                      strokeWidth: 0.75,
+                      outline: 'none'
+                    },
+
+                  }}
+                  />
+              ))}
+
             </>
           )}
         </Geographies>
       </ComposableMap>
       </svg>
+                <ReactTooltip
+                textColor='black'
+                backgroundColor='white'
+                borderColor = 'gray'
+                border = {true}
+                >{this.getTooltipContent(this.state.tooltipContent)}</ReactTooltip>
       </div>
     );
   }

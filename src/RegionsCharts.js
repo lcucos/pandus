@@ -27,7 +27,7 @@ const CustomTooltip = props => {
         newPayload.push({
             name : props.payload[i].name,
             value:"" + 
-                (props.payload[i+hs] !== undefined ? Number(props.payload[i+hs].value).toLocaleString() + " day, ":"")+
+                (props.payload[i+hs] !== undefined ? Number(props.payload[i+hs].value).toLocaleString() + " /day, ":"")+
                 Number(props.payload[i].value).toLocaleString() + " total",
             color: props.payload[i].color
         })
@@ -187,6 +187,7 @@ export default class RegionsChart extends Component{
                 width={chartWidth}            
                 height={chartHeight}
                 data={this.state.arrDays}
+                isAnimationActive={false}  
                 margin={{top: 10, right: 30, left: 20, bottom: 5}}
                 >
                 <XAxis dataKey="displayDate"/>
@@ -206,6 +207,7 @@ export default class RegionsChart extends Component{
                 width={chartWidth}            
                 height={chartHeight}
                 data={this.state.arrDays}
+                isAnimationActive={false}  
                 margin={{top: 10, right: 30, left: 20, bottom: 5}}
                 >
                 <XAxis dataKey="displayDate"/>
@@ -232,7 +234,7 @@ export default class RegionsChart extends Component{
             <div>
                 <p/>                    
                 <p/>
-                <div style={{textIndent: '30px'}}><b>Evolution by State</b></div>
+                <div style={{textIndent: '30px'}}><b>Progression by State</b></div>
                 <div className='center_right_left_container'>  
                     <div style={{display: 'inline-block', textIndent: '100px',margin:'0 auto'}}>
                     </div>

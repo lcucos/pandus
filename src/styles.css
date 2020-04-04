@@ -22,3 +22,11 @@
     width:100%;
     text-align:center
 }
+
+.grid_container_map_tooltip {
+    display: grid;
+    align-content: space-evenly;
+    grid-template-columns: 1fr 60px;
+    grid-gap: 7x;
+    padding: 10px;
+  }
