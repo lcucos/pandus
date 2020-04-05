@@ -16,7 +16,7 @@ import OverallCharts from './OverallCharts.js'
 import allStates from "./data/maps/us/allstates.json"
 import statesGeo from "./data/maps/us/states-10m.json"
 import RegionsChart from "./RegionsCharts.js"
-import PieChartSummary from './PieChartSummary.js'
+import PieChartSummary from './DistributionByState.js'
 
 class App extends Component {
 

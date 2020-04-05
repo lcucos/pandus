@@ -1,7 +1,6 @@
 # pandus
 Web app to visualize Covid 19 pandemic status. Project started as learning playground for React / JS with data from https://covidtracking.com/about-tracker/
-Please contribute and/or provide feedback as appropriate.
-Thank you
+Contribute, fork, give feedback, your choice. 
 
 Live at: https://cvd19.info.myroadtime.com/ 
 

@@ -201,6 +201,7 @@ class MapChart extends React.Component {
       </g>
       )
   }
+  
   drawLegendTests(){
     if(! this.getShowDataFlag("tests")){
       return
