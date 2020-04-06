@@ -12,7 +12,7 @@ import DefaultTooltipContent from 'recharts/lib/component/DefaultTooltipContent'
 import {exponentialClustering} from './Utils.js'
 
 const CustomTooltip = props => {
-    if (!props.active) {
+    if (!props.active || !props.payload) {
       return null
     }
     // mutating props directly is against react's conventions
@@ -107,7 +107,7 @@ export default class RegionsChart extends Component{
 
     componentDidMount() {
         this.setState({ isLoading: true });
-        fetch("https://covidtracking.com/api/states/daily")
+        fetch("https://covidtracking.com/api/states/daily.json")
         .then(response => {
            if (response.ok) {
               var tmp=response.json()
