@@ -83,6 +83,8 @@ class App extends Component {
             color:stateObj.color,
             tested:statesStatus[i].totalTestResults,
             deaths:statesStatus[i].death,
+            inICUNow:statesStatus[i].inIcuCurrently,
+            onVentilatorNow:statesStatus[i].onVentilatorCurrently,
             hospitalized:statesStatus[i].hospitalized,
             testsByUnit:Math.round(statesStatus[i].total*1000000/stateObj.population),
             positive:statesStatus[i].positive,
@@ -107,6 +109,7 @@ class App extends Component {
       // compute percent of totals
       for (i = 0; i < arrStates.length; i++) {
          arrStates[i].percentDeaths=arrStates[i].deaths/this.summary.deaths
+         arrStates[i].populationPercent=arrStates[i].population/this.summary.totPopulation * 100
          // set color
          arrStates[i].testColor = this.getScaleColor(arrStates[i].testsByUnit,p)
       }

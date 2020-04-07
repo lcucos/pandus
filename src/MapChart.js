@@ -103,16 +103,50 @@ class MapChart extends React.Component {
       <div>
       <strong>{el.stateName}</strong>
       <br/>
-        ({Number(el.population).toLocaleString()})
+        ( {Number(el.population).toLocaleString()} ) <br/> {(el.populationPercent).toFixed(2) + "%"}
       <div className="grid_container_map_tooltip">
-        <div align='left'>Tests</div> 
-        <div align='center'>{Number(el.tested).toLocaleString()}</div>
-        <div align='left'>Positives</div> 
-        <div align='center'>{Number(el.positive).toLocaleString()}</div>
-        <div align='left'>Hospitalized</div>
-        <div align='center'> {(!!el.hospitalized?Number(el.hospitalized).toLocaleString() :"NA")} </div>
-        <div align='left'>Deaths</div>
-        <div align='center'> {Number(el.deaths).toLocaleString()} </div>
+        
+        <div align='left'  ></div> 
+        <div align='right' >Count</div>
+        <div align='right' > % of Total</div>
+
+        <div align='left'  style={{color:Colors.test}}>Tests</div> 
+        <div align='right' style={{color:Colors.test}}>{Number(el.tested).toLocaleString()}</div>
+        <div align='right' style={{color:Colors.test}}>{(el.tested/this.summary.tests * 100).toFixed(1)+"%"}</div>
+
+        <div align='left'  style={{color:Colors.positive}}>Positives</div> 
+        <div align='right' style={{color:Colors.positive}}>{Number(el.positive).toLocaleString()}</div>
+        <div align='right' style={{color:Colors.positive}}>{(el.positive/this.summary.positives *100).toFixed(1)+"%"}</div>
+
+        <div align='right' style={{color:Colors.positive}}></div> 
+        <div align='right' style={{color:Colors.positive}}>({(el.percentPositiveFromTests*100).toFixed(1) +"%"} of tests)</div>
+        <div align='right' style={{color:Colors.positive}}></div>
+
+        <div align='left'  style={{color:Colors.hospitalized}}>Hospitalized</div>
+        <div align='right' style={{color:Colors.hospitalized}}> {(!!el.hospitalized?Number(el.hospitalized).toLocaleString() :"NA")} </div>
+        <div align='right' style={{color:Colors.hospitalized}}>{(!!el.hospitalized?(el.hospitalized/this.summary.hospitalized*100).toFixed(1)+"%" :"NA")}</div>
+        
+
+        <div align='left'  style={{color:Colors.icu}} >In ICU</div>
+        <div align='right' style={{color:Colors.icu}}> {(!!el.inICUNow?Number(el.inICUNow).toLocaleString():"NA")} </div>
+        <div align='right' > </div>
+
+        <div align='left'  style={{color:Colors.ventilator}}>On ventilator</div>
+        <div align='right' style={{color:Colors.ventilator}}> {(!!el.onVentilatorNow?Number(el.onVentilatorNow).toLocaleString():"NA")} </div>
+        <div align='right' > 
+        </div>
+
+        <div align='left'  style={{color:Colors.death}}>Deaths</div>
+        <div align='right' style={{color:Colors.death}}> {Number(el.deaths).toLocaleString()} </div>
+        <div align='right' style={{color:Colors.death}}>{(el.percentDeaths*100).toFixed(1)+"%"}
+        <p style={{paddingBottom:'1px'}}/>
+        </div>
+
+
+        <div align='left'><i>LastUpdate</i></div>
+        <div align='right'><i> {el.lastUpdated}</i> </div>
+        <div align='right'> </div>
+
       </div>
       </div>
       )
