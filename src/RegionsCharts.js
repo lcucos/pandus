@@ -7,7 +7,7 @@
 
 import React, { Component } from 'react'
 import './styles.css';
-import { Line, XAxis, YAxis, Tooltip, Legend, ComposedChart, Area} from 'recharts'
+import { Line, XAxis, YAxis, Tooltip, Legend, ComposedChart, Area, ReferenceLine} from 'recharts'
 import DefaultTooltipContent from 'recharts/lib/component/DefaultTooltipContent';
 import {exponentialClustering} from './Utils.js'
 
@@ -39,6 +39,10 @@ const CustomTooltip = props => {
     return <DefaultTooltipContent {...props} payload={newPayload} />;
   };
 
+const Checkbox = props => (
+    <input type="checkbox" {...props} />
+)
+
 export default class RegionsChart extends Component{
     stateInfo={}
     constructor(props) {
@@ -47,25 +51,19 @@ export default class RegionsChart extends Component{
         this.state = {
             statesSummary:props.prepData,
             statesGroups:exponentialClustering(props.prepData,"deaths"),
-            arrDays:[]
+            arrDays:[],
+            showStayAtHomeOrderLine:true,
+            showAllStatesFlag:false
         }
-        //console.dir(props.prepData)
-        var data=props.prepData
-        for(var i=0;i<data.length;i++){
-            this.stateInfo[data[i].stateCode]={
-                color:data[i].color,
-                name:data[i].stateName
-            }
-        }
+        this.stateInfo=props.mapStateData
      }
 
      prepareLogData(data){
-        var mapStatesInfo={}
         var arrOut = []
-        console.dir(data)
+        //console.dir(data)
         for(var i=0;i<data.length;i++){         
             var obj = {
-                index:i
+                index:data[i].displayDate
             }
             arrOut.push(obj);
             
@@ -89,13 +87,14 @@ export default class RegionsChart extends Component{
                 }
             });
         }
-        console.dir(arrOut)
+        //console.dir(arrOut)
         return arrOut
      }
 
      prepareData(data){
         //console.dir(data)
         var mapDays={}
+        var firstDayMap={}
         for(var i=data.length-1;i>=0;i--){         
             var date=new Date(data[i].dateChecked)
             
@@ -113,21 +112,35 @@ export default class RegionsChart extends Component{
             const stateID=data[i].state
 
             const stateTotalId=stateID+"_deaths"
-            const stateDeathIncId=stateID+"_deathsInc"
             const statePositiveId=stateID+"_positive"
-            const statePositiveIncId=stateID+"_positiveInc"
-            if(dayObj[stateTotalId]===undefined){
-                dayObj[stateTotalId] = 0
+            
+            if(firstDayMap[stateID] === undefined && !!data[i].positive){
+                firstDayMap[stateID]=date
+                //console.log("firstCase:"+stateID +":"+date + " " +data[i].positive)
             }
-            if(dayObj[statePositiveId]===undefined){
-                dayObj[statePositiveId] = 0
-            }
-            if(data[i].death !== undefined){
+
+            if(data[i].death !== undefined && data[i].death >0){
+                if(dayObj[stateTotalId]===undefined){
+                    dayObj[stateTotalId] = 0
+                }
                 dayObj[stateTotalId]+=data[i].death
             }
-            dayObj[statePositiveId]+=data[i].positive
-            dayObj[statePositiveIncId]=data[i].positiveIncrease
-            dayObj[stateDeathIncId]=data[i].deathIncrease
+            if(data[i].positive!==undefined && data[i].positive > 0){
+                if(dayObj[statePositiveId]===undefined){
+                    dayObj[statePositiveId] = 0
+                }
+                dayObj[statePositiveId]+=data[i].positive
+            }
+            if(data[i].positiveIncrease !== undefined && data[i].positiveIncrease > 0){            
+                const statePositiveIncId=stateID+"_positiveInc"
+                dayObj[statePositiveIncId]=data[i].positiveIncrease
+            }
+
+            if(data[i].deathIncrease !== undefined && data[i].deathIncrease > 0){
+                const stateDeathIncId=stateID+"_deathsInc"
+                dayObj[stateDeathIncId]=data[i].deathIncrease
+            }
+
             dayObj.mapPositives[stateID]={
                 deaths:dayObj[stateTotalId],
                 positive:dayObj[statePositiveId]
@@ -143,7 +156,7 @@ export default class RegionsChart extends Component{
         //console.dir(arrDays)
         this.setState({
             arrDays:arrDays,
-            arrRelDays:0//this.prepareLogData(arrDays)
+            arrRelDays:this.prepareLogData(arrDays)
         })
      }
 
@@ -164,10 +177,21 @@ export default class RegionsChart extends Component{
          .catch(error => this.setState({ error, isLoading: false }));
     }
 
+    plotStayHomeMarker(stateCode){
+        if(this.state.showStayAtHomeOrderLine === false){
+            return ("")
+        }
+        const color = this.stateInfo[stateCode].color
+        
+        return (!!this.stateInfo[stateCode].stayHomeDayMarker ? 
+            (<ReferenceLine key = {stateCode+"shdm"} x={this.stateInfo[stateCode].stayHomeDayMarker} stroke={color} strokeDasharray="3 3" />)
+            :(""))
+    }
+
     plotState(yLabel){
         const stateCode=yLabel.replace(/_.*/, '')
         const color = this.stateInfo[stateCode].color
-
+                
         return (
             <Line connectNulls type="monotone" 
             name={stateCode} 
@@ -176,7 +200,7 @@ export default class RegionsChart extends Component{
             stroke={color} 
             strokeWidth={2}  
             dot={false}
-            />
+            />            
             )
     }
     plotStateIncrease(yLabel){
@@ -197,7 +221,7 @@ export default class RegionsChart extends Component{
     }
 
     getGroupNames(arrStates){
-        var arr=arrStates.map(item=>(this.stateInfo[item].name))
+        var arr=arrStates.map(item=>(this.stateInfo[item].stateName))
         return (arr.join(" / "))
     }
     
@@ -206,6 +230,9 @@ export default class RegionsChart extends Component{
         const chartWidth  = 640
         const arrStates = groupData.arrData
         const bucketInfo = groupData.bucket
+        if(keyID > 3 && this.state.showAllStatesFlag===false){
+            return("")
+        }
         return (
             
             <div key={keyID} className='charts_title'>
@@ -223,20 +250,21 @@ export default class RegionsChart extends Component{
                 <p/>                                    
             <div className='row-components'>  
             <div className='recharts-cartesian-axis'>
-                Positive
+                Positives
                 <ComposedChart
                 className='recharts-cartesian-axis'
                 width={chartWidth}            
                 height={chartHeight}
                 data={this.state.arrDays}
                 isAnimationActive={false}  
-                margin={{top: 10, right: 30, left: 20, bottom: 5}}
+                margin={{top: 10, right: 10, left: 10, bottom: 5}}
                 >
                 <XAxis dataKey="displayDate"/>
-                <YAxis tickFormatter={this.formatYAxis}/>
+                <YAxis scale="log" domain={["auto", "auto"]} tickFormatter={this.formatYAxis}/>
                 <Tooltip content={ <CustomTooltip/> }/>                
                 {arrStates.map(item => (this.plotState(item+"_positive")))}
                 {arrStates.map(item => (this.plotStateIncrease(item+"_positiveInc")))}
+                {arrStates.map(item => (this.plotStayHomeMarker(item)))}
                 <Legend/>
                 </ComposedChart>
             </div>
@@ -250,13 +278,14 @@ export default class RegionsChart extends Component{
                 height={chartHeight}
                 data={this.state.arrDays}
                 isAnimationActive={false}  
-                margin={{top: 10, right: 30, left: 20, bottom: 5}}
+                margin={{top: 10, right: 10, left: 10, bottom: 5}}
                 >
                 <XAxis dataKey="displayDate"/>
-                <YAxis tickFormatter={this.formatYAxis}/>
+                <YAxis scale="log" domain={["auto", "auto"]} tickFormatter={this.formatYAxis}/>
                 <Tooltip content={ <CustomTooltip/> }/>
                 {arrStates.map(item => (this.plotState(item+"_deaths")))}
                 {arrStates.map(item => (this.plotStateIncrease(item+"_deathsInc")))}
+                {arrStates.map(item => (this.plotStayHomeMarker(item)))}
                 <Legend/>
                 </ComposedChart>
             </div>
@@ -284,43 +313,61 @@ export default class RegionsChart extends Component{
     }
 
     logAllStates(){
-        const chartHeight = 400
+        const chartHeight = 350
         const chartWidth  = 640
-
+        if(this.state.arrRelDays ===undefined){
+            return
+        }
         return (
+            <div>
+            <div ><b>Progression All States</b></div>                
+            <div className='recharts-cartesian-axis'>(log scale)</div>
+            <p style={{paddingBottom:'1px'}}/>
             <div className='recharts-cartesian-axis' className='row-components'>
+                <div className='recharts-cartesian-axis'>
+                Positives
             <ComposedChart
             className='recharts-cartesian-axis'
             width={chartWidth}            
             height={chartHeight}
             data={this.state.arrRelDays}
             isAnimationActive={false}  
-            margin={{top: 10, right: 30, left: 20, bottom: 5}}
+            margin={{top: 10, right: 10, left: 10, bottom: 5}}
             >
             <XAxis dataKey="index"/>
             <YAxis scale="log" domain={["auto", "auto"]} tickFormatter={this.formatYAxis}/>
-            <Tooltip content={ <CustomTooltip/> }/>            
+            <Tooltip formatter={(value) => new Intl.NumberFormat('en').format(value)} />            
             {this.state.statesSummary.map(item => (this.plotLogState(item.stateCode+"_positive")))}
             </ComposedChart>
+            </div>
 
-
+            <div className='recharts-cartesian-axis'>
+                Deaths
             <ComposedChart
             className='recharts-cartesian-axis'
             width={chartWidth}            
             height={chartHeight}
             data={this.state.arrRelDays}
             isAnimationActive={false}  
-            margin={{top: 10, right: 30, left: 20, bottom: 5}}
+            margin={{top: 10, right: 10, left: 10, bottom: 5}}
             >
             <XAxis dataKey="index"/>
             <YAxis scale="log" domain={["auto", "auto"]} tickFormatter={this.formatYAxis}/>
-            <Tooltip content={ <CustomTooltip/> }/>            
+            <Tooltip formatter={(value) => new Intl.NumberFormat('en').format(value)} />            
             {this.state.statesSummary.map(item => (this.plotLogState(item.stateCode+"_death")))}
             </ComposedChart>
-
+            </div>
+            </div>
             </div>
         )
     }
+
+    handleCheckboxChange = event =>
+    this.setState({ showStayAtHomeOrderLine: event.target.checked })
+
+    showAllStates = event =>
+    this.setState({ showAllStatesFlag: !this.state.showAllStatesFlag })
+
 
     render () {
         if(this.state.arrDays === undefined){
@@ -331,20 +378,30 @@ export default class RegionsChart extends Component{
         return (
             <div>
                 <p/>                    
-                <p/>
-                <div style={{textIndent: '30px'}}><b>Progression by State</b></div>
-
+                {this.logAllStates()}
+                <p style={{paddingBottom:'1px'}}/>
+                <div style={{textIndent: '30px'}}><b>Progression by State</b></div>                
+                <div style={{textIndent: '30px'}}className='recharts-cartesian-axis'>(log scale)</div>
                 <div className='center_right_left_container'>  
                     <div style={{display: 'inline-block', textIndent: '100px',margin:'0 auto'}}>
                     </div>
                     <div className='.recharts-cartesian-axis' style={{float:'right', color:'gray', fontSize: '0.9rem'}}>
                         States grouped on logarithmic buckets by total Deaths
                     </div>
+                <label className='.recharts-cartesian-axis' style={{float:'left', color:'gray', fontSize: '0.9rem'}}>
+                <Checkbox 
+                    checked={this.state.showStayAtHomeOrderLine}
+                    onChange={this.handleCheckboxChange}
+                />
+                <span>Show marker for 'Stay-At-Home Order'</span>
+                </label>
+
                 </div>
                 <p/>
                 <p/>                                    
                 {this.state.statesGroups.map(item => (this.plotGroup(item,keyID++)))}
                 <p/>
+                <button className='.recharts-cartesian-axis' onClick={this.showAllStates}>{this.state.showAllStatesFlag?"Show Only Most Affected":"Show All States"}</button>
                 <p/>
                 
             </div>

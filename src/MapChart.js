@@ -29,16 +29,6 @@ const offsets = {
   DC: [70, 71]
 };
 
-const rounded = num => {
-  if (num > 1000000000) {
-    return Math.round(num / 100000000) / 10 + "Bn";
-  } else if (num > 1000000) {
-    return Math.round(num / 100000) / 10 + "M";
-  } else {
-    return Math.round(num / 100) / 10 + "K";
-  }
-};
-
 const radiusPerUnit = 1;
 const unitSize = 20;
 
@@ -94,60 +84,72 @@ class MapChart extends React.Component {
     return maxR > d ? maxR : d
   }
 
+  addTooltipLine(label, color, value, percent1From, percent2From, percent2Text){
+    if(!!value ===false){
+      return
+    }
+    var val3=undefined
+    var margin="18px"
+    if(percent2From !== undefined){
+      var var3=value/percent2From * 100
+      val3 = (var3).toFixed(2)+"% "+ percent2Text
+      if (var3>10){
+        margin="11px"
+      }
+    }
+    return(
+      <>
+      <div align='left'  style={{color:color}}>{label}</div> 
+      <div align='right' style={{color:color}}>{Number(value).toLocaleString()}</div>
+      <div align='right' style={{color:color}}>{!!percent1From?(value/percent1From * 100).toFixed(2)+"% ":""}</div>
+      <div align='left'  style={{color:color, marginLeft:margin}}>  {(!!val3 ? val3 : "")} </div>
+      </>
+    )
+  }
+
+  addTooltipDateLine(label, value){
+    if(!!value ===false){
+      return
+    }
+    return (
+      <>
+      <div align='left' >{label}</div>
+      <div align='right'> {value} </div>
+      </>
+    )
+
+  }
+
+  
   getTooltipContent(geoId){
     if(!!geoId === false){
       return
     }
+    
+    //        <div align='right' style={{color:Colors.positive}}>({(el.percentPositiveFromTests*100).toFixed(1) +"%"} of tests)</div>
+
     var el = this.allData[geoId]
     return (
       <div>
       <strong>{el.stateName}</strong>
-      <br/>
-        ( {Number(el.population).toLocaleString()} ) <br/> {(el.populationPercent).toFixed(2) + "%"}
       <div className="grid_container_map_tooltip">
-        
         <div align='left'  ></div> 
         <div align='right' >Count</div>
-        <div align='right' > % of Total</div>
-
-        <div align='left'  style={{color:Colors.test}}>Tests</div> 
-        <div align='right' style={{color:Colors.test}}>{Number(el.tested).toLocaleString()}</div>
-        <div align='right' style={{color:Colors.test}}>{(el.tested/this.summary.tests * 100).toFixed(1)+"%"}</div>
-
-        <div align='left'  style={{color:Colors.positive}}>Positives</div> 
-        <div align='right' style={{color:Colors.positive}}>{Number(el.positive).toLocaleString()}</div>
-        <div align='right' style={{color:Colors.positive}}>{(el.positive/this.summary.positives *100).toFixed(1)+"%"}</div>
-
-        <div align='right' style={{color:Colors.positive}}></div> 
-        <div align='right' style={{color:Colors.positive}}>({(el.percentPositiveFromTests*100).toFixed(1) +"%"} of tests)</div>
-        <div align='right' style={{color:Colors.positive}}></div>
-
-        <div align='left'  style={{color:Colors.hospitalized}}>Hospitalized</div>
-        <div align='right' style={{color:Colors.hospitalized}}> {(!!el.hospitalized?Number(el.hospitalized).toLocaleString() :"NA")} </div>
-        <div align='right' style={{color:Colors.hospitalized}}>{(!!el.hospitalized?(el.hospitalized/this.summary.hospitalized*100).toFixed(1)+"%" :"NA")}</div>
-        
-
-        <div align='left'  style={{color:Colors.icu}} >In ICU</div>
-        <div align='right' style={{color:Colors.icu}}> {(!!el.inICUNow?Number(el.inICUNow).toLocaleString():"NA")} </div>
-        <div align='right' > </div>
-
-        <div align='left'  style={{color:Colors.ventilator}}>On ventilator</div>
-        <div align='right' style={{color:Colors.ventilator}}> {(!!el.onVentilatorNow?Number(el.onVentilatorNow).toLocaleString():"NA")} </div>
-        <div align='right' > 
-        </div>
-
-        <div align='left'  style={{color:Colors.death}}>Deaths</div>
-        <div align='right' style={{color:Colors.death}}> {Number(el.deaths).toLocaleString()} </div>
-        <div align='right' style={{color:Colors.death}}>{(el.percentDeaths*100).toFixed(1)+"%"}
-        <p style={{paddingBottom:'1px'}}/>
-        </div>
-
-
-        <div align='left'><i>LastUpdate</i></div>
-        <div align='right'><i> {el.lastUpdated}</i> </div>
-        <div align='right'> </div>
-
+        <div align='right' >% of Total</div>
+        <div align='left' style={{paddingLeft:'18px',paddingBottom:'2px'}}>% of State .........</div>
+        {this.addTooltipLine("Population",   'black',             el.population,   this.summary.totPopulation)}
+        {this.addTooltipLine("Tests",        Colors.test,         el.tested,       this.summary.tests, el.population,"Population")}
+        {this.addTooltipLine("Positives",    Colors.positive,     el.positive,     this.summary.positives, el.tested, "Tests")}
+        {this.addTooltipLine("Hospitalized", Colors.hospitalized, el.hospitalized, this.summary.hospitalized, el.positive,"Positives")}
+        {this.addTooltipLine("In ICU",       Colors.icu,          el.inICUNow,     this.summary.inICU, el.positive,"Positives")}
+        {this.addTooltipLine("On Ventilator",Colors.ventilator,   el.onVentilatorNow, this.summary.onVentilator, el.positive,"Positives")}
+        {this.addTooltipLine("Deaths",       Colors.death,        el.deaths,       this.summary.deaths, el.positive, "Positives")}
       </div>
+      <div className="grid_container_map_dates_tooltip">
+        {this.addTooltipDateLine("First Case", el.firstCase)}
+        {this.addTooltipDateLine("Stay-at-Home Order", !!el.stayhomeorder?el.stayhomeorder:"Not Issued")}
+      </div>
+      <div align='right'><i>LastUpdate : {el.lastUpdated}</i></div>
       </div>
       )
   }
@@ -174,7 +176,7 @@ class MapChart extends React.Component {
     sizeD = radiusPerUnit * Math.sqrt(sizeD/unitSize)
     //{this.showCircle(sizeT, this.getShowDataFlag("tests"), Colors.test,0.15)}
     //{this.showCircle(sizeT, this.getShowDataFlag("tests"), Colors.test,0.15)}
-    var maxRadius = sizeC > sizeH?sizeC : sizeH
+    //var maxRadius = sizeC > sizeH?sizeC : sizeH
     var textOffsetY = -1*this.getMaxRadius(sizeC, sizeH, sizeD) - 3
 
     return (

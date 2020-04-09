@@ -18,6 +18,10 @@ import statesGeo from "./data/maps/us/states-10m.json"
 import RegionsChart from "./RegionsCharts.js"
 import PieChartSummary from './DistributionByState.js'
 
+Number.prototype.round = function(places) {
+   return +(Math.round(this + "e+" + places)  + "e-" + places);
+ }
+
 class App extends Component {
 
    constructor(props) {
@@ -51,6 +55,7 @@ class App extends Component {
       var mapStatesByGeoId = {}
       var totPopulation = 0
       var mapStatesByStateCode = {}
+      
       for (var i = 0; i < allStates.length; i++) {
          idsMap[allStates[i].id] = allStates[i];
          valMap[allStates[i].val] = allStates[i];
@@ -61,6 +66,8 @@ class App extends Component {
       this.summary.deaths =0
       this.summary.tests =0
       this.summary.hospitalized =0
+      this.summary.inICU =0
+      this.summary.onVentilator =0
       this.summary.totPopulation=totPopulation
       
       var maxTests =0
@@ -74,13 +81,16 @@ class App extends Component {
          this.summary.deaths+=statesStatus[i].death
          this.summary.tests+=statesStatus[i].total
          this.summary.hospitalized+=statesStatus[i].hospitalized
-
+         this.summary.inICU+=statesStatus[i].inIcuCurrently
+         this.summary.onVentilator+=statesStatus[i].onVentilatorCurrently
          // prepare object
          var obj = {
             stateName:stateObj.name,
             stateCode:stateObj.id,
+            firstCase:stateObj.firstcase,
             population:stateObj.population,
             color:stateObj.color,
+            stayhomeorder:stateObj.stayhomeorder,
             tested:statesStatus[i].totalTestResults,
             deaths:statesStatus[i].death,
             inICUNow:statesStatus[i].inIcuCurrently,
@@ -91,9 +101,15 @@ class App extends Component {
             positivesByUnit:Math.round(statesStatus[i].positive*1000000/stateObj.population),
             deathsByUnit:Math.round(statesStatus[i].death*1000000/stateObj.population),
             lastUpdated:statesStatus[i].lastUpdateEt,
-            percentPositiveFromTests:statesStatus[i].positive/statesStatus[i].totalTestResults,
+            percentPositiveFromTests:(100*statesStatus[i].positive/statesStatus[i].totalTestResults).round(2),
             percentDeaths:0
          }
+         //prep marker day
+         if(stateObj.stayhomeorder && stateObj.stayhomeorder.localeCompare('partial')!=0){
+            var tmp = new Date(Date.parse(stateObj.stayhomeorder))
+            obj.stayHomeDayMarker=tmp.toLocaleString('default', { month: 'short' }) + "/"+ (tmp.getDate())
+         }
+         
          maxTests = obj.testsByUnit > maxTests?obj.testsByUnit:maxTests
          
          mapStatesByGeoId[stateObj.val]=obj;
@@ -157,7 +173,7 @@ class App extends Component {
             <OverallCharts/>
             <StatesTable          prepData = {this.state.arrStates} summary ={this.summary}/>
             <PieChartSummary      prepData = {this.state.arrStates} mapStateData={this.state.mapStatesByStateCode} summary  = {this.summary}/>
-            <RegionsChart         prepData = {this.state.arrStates}/>
+            <RegionsChart         prepData = {this.state.arrStates} mapStateData={this.state.mapStatesByStateCode}/>
             <PageFooter/>
             <p/> 
          </div>

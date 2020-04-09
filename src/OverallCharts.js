@@ -8,7 +8,7 @@
 import React, { Component } from 'react'
 import './styles.css';
 import {Area, Line, XAxis, YAxis, Tooltip, Legend, ComposedChart} from 'recharts';
-import { FormControl,FormControlLabel,FormLabel, Radio, RadioGroup} from '@material-ui/core';
+import { FormControl,FormControlLabel,Radio, RadioGroup} from '@material-ui/core';
 
 
 import {Colors} from './Colors.js'
@@ -18,7 +18,7 @@ export function  updateScaleType(data){
 }
 
 function RadioButtons(props) {
-    const [selectedValue, setSelectedValue] = React.useState('a');
+    const [, setSelectedValue] = React.useState('a');
   
     const handleChange = (event) => {
       setSelectedValue(event.target.value);
@@ -118,43 +118,9 @@ export default  class OverallCharts extends Component{
            </div>
          )
      }    
-/*
-     lineChart(color,yKey,yLabel, height, title){
-        //   <CartesianGrid strokeDasharray="3 3"/>
-        const yKey2="death"
-        const color2=Colors.death
-        yLabel = "Positive"
-        const yLabel2= "Deaths"
-        return (
-            <div className='recharts-cartesian-axis'>
-                <b>{(!!title?title:null)}</b>
-            <ComposedChart
-                className='recharts-cartesian-axis'
-                width={this.chartWidth}            
-                height={height}
-                data={this.state.rawData}
-                isAnimationActive={false}  
-                margin={{top: 10, right: 30, left: 20, bottom: 5}}
-                >
-                <XAxis dataKey="displayDate"/>
-                <YAxis scale="log" domain={['auto', 'auto']}  tickFormatter={this.formatYAxis}/>
-                <Tooltip formatter={(value) => new Intl.NumberFormat('en').format(value)} />
-                <Legend />
-                <Line type="monotone" dataKey={yKey} name={yLabel} stroke={color} dot={false} strokeWidth={3}/>
-                <Line type="monotone" dataKey={yKey2} name={yLabel2} stroke={color2} dot={false} strokeWidth={3}/>
-            </ComposedChart>
-            </div>
-        )
-     }
-*/
-     render () {
-        //const chartHeightTotals = 300
-        const chartHeightPerDay = 300
-//            {this.lineChart(Colors.death, "death", "Total", chartHeightTotals,"Deaths")}
-//<div className='row-components'>            
-//{this.lineChart(Colors.positive, "positive", "Total", chartHeightTotals, "Positive")}
-//</div>
 
+     render () {
+        const chartHeightPerDay = 300
         return (
             <div>
             <b>Nationwide Progression</b>

@@ -26,6 +26,7 @@ function CustomTooltipPie (tooltipProps) {
 }
 const mapStateCodeToName={}
 
+
 function CustomTooltipBar (props) {
     if(props.payload.length ===0){
         return
@@ -37,7 +38,7 @@ function CustomTooltipBar (props) {
             continue
         }
         newPayload.push({
-            name : props.payload[i].name.substring(1),
+            name : props.payload[i].name,
             value: props.payload[i].value.toFixed(2) + " %", 
             color: props.payload[i].color
         })
@@ -116,7 +117,7 @@ class SimplePieChart extends Component{
 class CustomizedAxisTick extends PureComponent {
     render() {
       const {
-        x, y, stroke, payload,
+        x, y, payload,
       } = this.props;
   
       return (
@@ -136,18 +137,20 @@ class PieChartSummary extends Component{
         var dataPositives=[]
         var cumSum = 0 
         var i = 0
+        var j = 0
+        var stateArr = null
+        var combinedName = null
         // compute pie data
         for(i=0;i<arrStateGroups.length;i++){
-            var stateArr=arrStateGroups[i].arrData
+            stateArr=arrStateGroups[i].arrData
             var totalD=0
             var totalP=0
-            for(var j=0;j<stateArr.length;j++){
+            for(j=0;j<stateArr.length;j++){
                 totalD+=props.mapStateData[stateArr[j]].deaths
                 totalP+=props.mapStateData[stateArr[j]].positive
             }
             cumSum+=totalD
-            var tmp = cumSum/totDeaths
-            var combinedName = stateArr.join(" / ")//(stateArr.map(item=>(props.mapStateData[item].stateName)).join(" / "))
+            combinedName = stateArr.join(" / ")//(stateArr.map(item=>(props.mapStateData[item].stateName)).join(" / "))
             //console.log(i+" : " + combinedName + " : " +(totalD/totDeaths).toFixed(2)+" "+ cumSum  +" " + totalD  + " totDeaths = " + totDeaths + " tmp="+(tmp).toFixed(2))
             dataDeaths.push({
                 value:totalD,
@@ -165,9 +168,9 @@ class PieChartSummary extends Component{
             totalD=0
             totalP=0
             for(++i;i<arrStateGroups.length;i++){
-                var stateArr=arrStateGroups[i].arrData
-                var combinedName = stateArr.join(" / ")
-                for(var j=0;j<stateArr.length;j++){
+                stateArr=arrStateGroups[i].arrData
+                combinedName = stateArr.join(" / ")
+                for(j=0;j<stateArr.length;j++){
                     totalD+=props.mapStateData[stateArr[j]].deaths
                     totalP+=props.mapStateData[stateArr[j]].positive
                 }
@@ -187,7 +190,7 @@ class PieChartSummary extends Component{
             mapStateCodeToName[props.mapStateData[m].stateCode] = props.mapStateData[m].stateName
             arrPerc.push({
                 stateCode:props.mapStateData[m].stateCode,
-                "percentPositiveFromTests": props.mapStateData[m].percentPositiveFromTests*100,
+                "percentPositiveFromTests": props.mapStateData[m].percentPositiveFromTests,
                 "percentTestsFromAll":props.mapStateData[m].tested/props.summary.tests*100,
                 "percentPopulation":props.mapStateData[m].population/props.summary.totPopulation*100
             })
@@ -232,15 +235,15 @@ class PieChartSummary extends Component{
         const xLabel = "stateCode"
 
         const yKeyP_T  = "percentPositiveFromTests"
-        const legP_T   = "% Positive (from tests)"
+        const legP_T   = "Positive (% of tests)"
         const colorP_T = COLORS[0]
 
         const yKeyT_A   = "percentTestsFromAll"
-        const legT_A    = "% Tests (from all tests)"
+        const legT_A    = "Tests (% of total)"
         const colorT_A  = COLORS[3]
 
         const yKeyPop_A  = "percentPopulation" 
-        const legPop_A   = "% Population (from all)"
+        const legPop_A   = "Population (% of total)"
         const colorPop_A = COLORS[7]
 
         const refLineLabel = "Positives to Tests Average : "+this.state.refLine  + " %"

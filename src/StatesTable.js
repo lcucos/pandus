@@ -53,7 +53,7 @@ const headCells = [
   { id: 'stateName', numeric: false, disablePadding: true, label: 'State' },
   { id: 'population', numeric: true, disablePadding: false, label: 'Population*' },
   { id: 'tested', numeric: true, disablePadding: false, label: 'Tests' },
-  { id: 'positive', numeric: true, disablePadding: false, label: 'Positive' },
+  { id: 'positive', numeric: true, disablePadding: false, label: 'Positives' },
   { id: 'percentPositiveFromTests', numeric: true, disablePadding: false, label: "Positive % of_Tests" },
   { id: 'deaths', numeric: true, disablePadding: false, label: 'Deaths' },
   { id: 'hospitalized', numeric: true, disablePadding: false, label: 'Hospitalized' },
@@ -130,7 +130,6 @@ const useStyles = makeStyles(theme => ({
 
 export default function StatesTable(data) {
   const rows=data.prepData
-  const summary=data.summary
 
   const classes = useStyles();
   const [order, setOrder] = React.useState('desc');
@@ -194,7 +193,7 @@ export default function StatesTable(data) {
                       <TableCell align="right">{Number(row.population).toLocaleString()}</TableCell>
                       <TableCell align="right">{Number(row.tested).toLocaleString()}</TableCell>
                       <TableCell align="right">{Number(row.positive).toLocaleString()}</TableCell>
-                      <TableCell align="right">{(row.percentPositiveFromTests*100).toFixed(2)+" %"}</TableCell>
+                      <TableCell align="right">{(row.percentPositiveFromTests)+" %"}</TableCell>
                       <TableCell align="right">{Number(row.deaths).toLocaleString()}</TableCell>
                       <TableCell align="right">{(row.hospitalized==null?"NA":Number(row.hospitalized).toLocaleString())}</TableCell>
                       <TableCell align="right">{Number(row.testsByUnit).toLocaleString()}</TableCell>
