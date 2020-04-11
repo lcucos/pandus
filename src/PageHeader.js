@@ -7,6 +7,10 @@
 
 import React, { Component } from 'react'
 import './styles.css';
+import {TwitterShareButton,TwitterIcon} from "react-share";
+import ReactFBLike from './FBReactLike.js';
+
+
 
 class PageHeader extends Component{
 
@@ -14,21 +18,35 @@ class PageHeader extends Component{
        super(props);
        this.summary = props.summary
     }
-    onClick(){
-      window.location.href = 'https://twitter.com/myroadtime?ref_src=twsrc%5Etfw'
-     }
+
     render(){
        return (
         <div>
-        <div className='center_right_left_container'> 
-          <div style={{float:'right', marginRight:'150px'}}>
-            <a href='https://twitter.com/myroadtime?ref_src=twsrc%5Etfw'> <img border="0"  style={{width:'30px', height:'30px'}} src={process.env.PUBLIC_URL +'/twitter.png'}/></a>
+
+        <table width="1000">
+        <tbody>
+          <tr>
+            <td> 
+              <a href="https://www.myroadtime.com" className='text_align_vmiddle' style={{padding:'7px',backgroundColor:"#310884", color:'white'}}><b><i>MYROADTIME</i></b></a>
+            </td>
+            <td><center><h1 style={{marginTop:'10px'}}>Covid19 Status</h1></center></td>
+            <td>
+            <TwitterShareButton url='https://twitter.com/myroadtime?ref_src=twsrc%5Etfw'><TwitterIcon size={36} round/></TwitterShareButton>
+            </td>
+
+            <td>
+              <div>
+            <div style={{width:"55px"}} >
+                  <ReactFBLike href="https://cvd19.info.myroadtime.com/"/>            
+            </div>
           </div>
-          <div style={{float:'center',marginLeft:'180px'}}>
-            <h1>Covid19 Status</h1>
-          </div>  
-        </div>
-            <h1>USA</h1>
+            </td>
+
+          </tr>
+          </tbody>
+        </table>
+
+        <h1 style={{marginTop:'0px'}}>USA</h1>
         <div align='center' className="StylesParagraph">
           Community project sponsored by <a href="https://www.myroadtime.com">MyRoadTime</a>  using data from <a href="https://covidtracking.com/">The COVID Tracking Project</a>. 
           Please click <a href="https://covidtracking.com/about-tracker/">here</a> for important information regarding data accuracy and recency.

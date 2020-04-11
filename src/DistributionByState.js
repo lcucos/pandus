@@ -26,29 +26,6 @@ function CustomTooltipPie (tooltipProps) {
 }
 const mapStateCodeToName={}
 
-
-function CustomTooltipBar (props) {
-    if(props.payload.length ===0){
-        return
-    }
-    const label = mapStateCodeToName[props.label]
-    const newPayload = []
-    for(var i=0;i<props.payload.length;i++){
-        if(props.payload[i].stroke === undefined){
-            continue
-        }
-        newPayload.push({
-            name : props.payload[i].name,
-            value: props.payload[i].value.toFixed(2) + " %", 
-            color: props.payload[i].color
-        })
-    }
-    //console.dir(props.payload)
-    // we render the default, but with our overridden payload
-    return <DefaultTooltipContent {...props} payload={newPayload} label={label}/>;
-
-}
-
 class SimplePieChart extends Component{
     renderedLabel=false
 
@@ -229,7 +206,44 @@ class PieChartSummary extends Component{
             </text>
         )
     }
+
+    renderBarTooltipItem(name, value, color){
+        var name_short=name.replace(/\(.*/gi, '');
+        var name_extra=name.replace(/.*\(/gi, '');
+        return(
+                <>
+                    <div align='left' style={{color:color}}>{name_short}</div>
+                    <div align='center' style={{color:color}}>:</div>
+                    <div align='right' style={{color:color}}>{value.toFixed(2) + " %"}</div> 
+                    <div align='left' style={{color:color}}>{name_extra}</div>
+                </>
+        )
+    }
     
+    renderTooltipBarChart(props) {
+        if(props.payload.length==0){
+            return ("")
+        }
+        const label = mapStateCodeToName[props.label]
+
+        return (
+            <div className="grid_container_tooltip" >
+            <div style={{textAlign:"center"}}>{label}</div>
+            <div className="grid_bar_chart_tooltip">
+            {props.payload.map(item=>(
+                         <>
+                             <div align='left' style={{color:item.color}}>{item.name.replace(/\(.*/gi, '')}</div>
+                             <div align='center' style={{color:item.color}}>:</div>
+                             <div align='right' style={{color:item.color}}>{item.value.toFixed(2) + " %"}</div> 
+                             <div align='left'  style={{color:item.color, marginLeft:'8px'}}>{item.name.replace(/.*\%|\)/gi, '')}</div>
+                         </>
+                 ))}
+            </div>
+            </div>
+        )
+      }
+
+
     barChart(data){
         //const yKey = "percentPositiveFromTests"
         const xLabel = "stateCode"
@@ -260,7 +274,7 @@ class PieChartSummary extends Component{
        >
            <XAxis dataKey={xLabel} tick={<CustomizedAxisTick/>} minTickGap={-5}/>
            <YAxis/>
-           <Tooltip content={CustomTooltipBar}/>
+           <Tooltip content={this.renderTooltipBarChart}/>
            <Legend />
            <Bar dataKey={yKeyP_T} stackId="a" name={legP_T} stroke={colorP_T} fill={colorP_T}/>
            <Bar dataKey={yKeyT_A} stackId="a" name={legT_A} stroke={colorT_A} fill={colorT_A}/>

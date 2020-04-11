@@ -312,6 +312,21 @@ export default class RegionsChart extends Component{
             )
     }
 
+    renderTooltipAllStatesChart(props) {
+        if(props.payload.length==0){
+            return ("")
+        }
+        return (
+            <div className="grid_container_tooltip" >
+            <div style={{textAlign:"center"}}>{props.label}</div>
+            <div className="grid_allstates_chart_tooltip">
+            {props.payload.map(item=>(<><div align='left' style={{color:item.color}}>{item.name}</div>
+                                        <div align='left' style={{color:item.color}}>: {Number(item.value).toLocaleString()}</div> </>))}
+            </div>
+            </div>
+        )
+      }
+
     logAllStates(){
         const chartHeight = 350
         const chartWidth  = 640
@@ -336,7 +351,7 @@ export default class RegionsChart extends Component{
             >
             <XAxis dataKey="index"/>
             <YAxis scale="log" domain={["auto", "auto"]} tickFormatter={this.formatYAxis}/>
-            <Tooltip formatter={(value) => new Intl.NumberFormat('en').format(value)} />            
+            <Tooltip content={this.renderTooltipAllStatesChart} />            
             {this.state.statesSummary.map(item => (this.plotLogState(item.stateCode+"_positive")))}
             </ComposedChart>
             </div>
@@ -353,7 +368,7 @@ export default class RegionsChart extends Component{
             >
             <XAxis dataKey="index"/>
             <YAxis scale="log" domain={["auto", "auto"]} tickFormatter={this.formatYAxis}/>
-            <Tooltip formatter={(value) => new Intl.NumberFormat('en').format(value)} />            
+            <Tooltip content={this.renderTooltipAllStatesChart} />            
             {this.state.statesSummary.map(item => (this.plotLogState(item.stateCode+"_death")))}
             </ComposedChart>
             </div>

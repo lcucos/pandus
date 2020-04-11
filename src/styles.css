@@ -42,3 +42,74 @@
     padding-bottom: 5px;
     padding-top: 0px;
   }
+
+  .vertical-center {
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+  }
+
+  .grid_container_tooltip {
+    background:white;
+    padding: 10px;
+    border-width: 1px;
+    border-color: lightgray;
+    border-style: solid;
+    font-size: 0.8rem;
+    font-family: Roboto, sans-serif;
+}
+  .grid_allstates_chart_tooltip {
+    display: grid;
+    align-content: space-evenly;
+    grid-template-columns: 22px 68px 22px 68px 22px 68px;
+    grid-gap: 7x;
+    padding: 5px;
+    padding-left: 30px;
+    font-size: 0.8rem;
+    font-family: Roboto, sans-serif;
+}
+
+.titleHeader {
+  width: 1000px;
+  display: block;
+  display: grid;
+  align-content: space-evenly;
+  grid-template-columns: 220px auto 220px;
+  grid-gap: '10px';
+  
+};
+
+
+.vertical-center {
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+  vertical-align: middle;
+}
+
+.grid_bar_chart_tooltip {
+  display: grid;
+  align-content: space-evenly;
+  grid-template-columns: 80px 5px 60px 75px;
+  grid-gap: 7x;
+  padding: 5px;
+  padding-left: 30px;
+  font-size: 0.8rem;
+  font-family: Roboto, sans-serif;
+}
+
+
+.div_align_vmiddle > * {
+  vertical-align: middle;
+}
+
+.text_align_vmiddle {
+  display: inline-block;
+  margin: 0;
+  font-size: .8rem;
+  font-family: Roboto, sans-serif;
+}
