@@ -102,7 +102,8 @@ class App extends Component {
             deathsByUnit:Math.round(statesStatus[i].death*1000000/stateObj.population),
             lastUpdated:statesStatus[i].lastUpdateEt,
             percentPositiveFromTests:(100*statesStatus[i].positive/statesStatus[i].totalTestResults).round(2),
-            percentDeaths:0
+            percentDeaths:0,
+            positivegrowthrate:0
          }
          //prep marker day
          if(stateObj.stayhomeorder && stateObj.stayhomeorder.localeCompare('partial')!=0){

@@ -8,7 +8,6 @@
 import React, { Component, PureComponent } from 'react'
 import {PieChart, Pie, Cell, Tooltip, BarChart,Bar, XAxis, YAxis, Legend, ReferenceLine} from 'recharts'
 import './styles.css'
-import DefaultTooltipContent from 'recharts/lib/component/DefaultTooltipContent';
 import {exponentialClustering} from './Utils.js'
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884bc', '#c9af95','#be4401','#7e793f','#f05bb5',];
@@ -232,10 +231,10 @@ class PieChartSummary extends Component{
             <div className="grid_bar_chart_tooltip">
             {props.payload.map(item=>(
                          <>
-                             <div align='left' style={{color:item.color}}>{item.name.replace(/\(.*/gi, '')}</div>
+                             <div align='left'  style={{color:item.color}}>{item.name.replace(/\(.*/gi, '')}</div>
                              <div align='center' style={{color:item.color}}>:</div>
                              <div align='right' style={{color:item.color}}>{item.value.toFixed(2) + " %"}</div> 
-                             <div align='left'  style={{color:item.color, marginLeft:'8px'}}>{item.name.replace(/.*\%|\)/gi, '')}</div>
+                             <div align='left'   style={{color:item.color, marginLeft:'8px'}}>{item.name.replace(/.*\%|\)/gi, '')}</div>
                          </>
                  ))}
             </div>

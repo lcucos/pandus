@@ -93,8 +93,8 @@ export default  class OverallCharts extends Component{
          const yLabelD = "Daily"
          return(
             <div className='recharts-cartesian-axis'>
-                <b>{(!!title?title:null)}</b>
-
+                <b>{(!!title?title:null)}</b><br/>
+                Total and Daily
             <ComposedChart
             className='recharts-cartesian-axis'
             width={this.chartWidth}            
@@ -111,7 +111,6 @@ export default  class OverallCharts extends Component{
             <XAxis dataKey="displayDate"/>
             <YAxis scale={this.state.scaleFlags} domain={["auto", "auto"]} tickFormatter={this.formatYAxis}/>
             <Tooltip formatter={(value) => new Intl.NumberFormat('en').format(value)} />
-            <Legend />
             <Line type="monotone" dataKey={yKey} name={yLabelT} stroke={color} dot={false} strokeWidth={3}/>
             <Area type="monotone" dataKey={yKeyD} name={yLabelD} stroke={color} fillOpacity={1} fill={fillColor}/>
            </ComposedChart>

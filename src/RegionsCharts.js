@@ -10,6 +10,7 @@ import './styles.css';
 import { Line, XAxis, YAxis, Tooltip, Legend, ComposedChart, Area, ReferenceLine} from 'recharts'
 import DefaultTooltipContent from 'recharts/lib/component/DefaultTooltipContent';
 import {exponentialClustering} from './Utils.js'
+import BarChartGrowthRateAllNow from './BarChartGrowthRateAllNow.js'
 
 // TODO: look for least square line fitting 
 // https://medium.com/@sahirnambiar/linear-least-squares-a-javascript-implementation-and-a-definitional-question-e3fba55a6d4b
@@ -44,7 +45,7 @@ const Checkbox = props => (
 )
 
 export default class RegionsChart extends Component{
-    stateInfo={}
+    
     constructor(props) {
         super(props);
         
@@ -53,9 +54,10 @@ export default class RegionsChart extends Component{
             statesGroups:exponentialClustering(props.prepData,"deaths"),
             arrDays:[],
             showStayAtHomeOrderLine:true,
-            showAllStatesFlag:false
+            showAllStatesFlag:false,
+            averageDays:3,
+            stateInfo:props.mapStateData
         }
-        this.stateInfo=props.mapStateData
      }
 
      prepareLogData(data){
@@ -91,10 +93,24 @@ export default class RegionsChart extends Component{
         return arrOut
      }
 
+     getFormattedDate(date) {
+        var year = date.getFullYear();
+      
+        var month = (1 + date.getMonth()).toString();
+        month = month.length > 1 ? month : '0' + month;
+      
+        var day = date.getDate().toString();
+        day = day.length > 1 ? day : '0' + day;
+        
+        return year+month + day;
+      }
      prepareData(data){
         //console.dir(data)
         var mapDays={}
         var firstDayMap={}
+        var lastDaySatesMap={}
+        const arrDays=[]
+
         for(var i=data.length-1;i>=0;i--){         
             var date=new Date(data[i].dateChecked)
             
@@ -108,9 +124,10 @@ export default class RegionsChart extends Component{
                     mapPositives:{},
                     count:0
                 }
+                arrDays.push(dayObj)
             }
             const stateID=data[i].state
-
+            lastDaySatesMap[stateID] = data[i]
             const stateTotalId=stateID+"_deaths"
             const statePositiveId=stateID+"_positive"
             
@@ -147,16 +164,36 @@ export default class RegionsChart extends Component{
             }
             //dayObj.mapDeaths[stateID]=dayObj[statePositiveId]
         }
-        const arrDays=[]
-        for (var key in mapDays) {
-            if (mapDays.hasOwnProperty(key)) {
-                arrDays.push(mapDays[key])
-            }
-        }
+        // prepare last day values 
         //console.dir(arrDays)
+        var totDeaths = 0        
+        var log2=Math.log(2)
+
+        var newStateSummary=this.state.statesSummary
+        for (i = 0; i < newStateSummary.length; i++) {
+            var item = newStateSummary[i]
+            if(!!item.deaths){
+                totDeaths += item.deaths            
+            }
+            var dt=new Date(item.stayhomeorder)
+            if(dt.getTime()=== dt.getTime()){
+                var daySH=this.getFormattedDate(dt)
+                item.daySH = daySH                
+                //console.log(item.stateCode + " : " + mapDays[daySH][item.stateCode+"_positive"])
+                //console.dir(item.stateCode + " : " + this.getFormattedDate(dt))
+            }
+            var prevPositive = arrDays[arrDays.length - this.state.averageDays -1][item.stateCode+"_positive"]
+            item.positivegrowthrate=  !!prevPositive? Math.log(item.positive/prevPositive)/(this.state.averageDays * log2) : 0
+
+            var prevDeaths = arrDays[arrDays.length - this.state.averageDays -1][item.stateCode+"_deaths"]
+            item.deathgrowthrate=  !!prevDeaths? Math.log(item.deaths/prevDeaths)/(this.state.averageDays * log2) : 0
+        }
+        
+        //console.log("Total deaths = " + totDeaths)
+        
         this.setState({
             arrDays:arrDays,
-            arrRelDays:this.prepareLogData(arrDays)
+            arrRelDays:this.prepareLogData(arrDays),
         })
      }
 
@@ -181,16 +218,16 @@ export default class RegionsChart extends Component{
         if(this.state.showStayAtHomeOrderLine === false){
             return ("")
         }
-        const color = this.stateInfo[stateCode].color
+        const color = this.state.stateInfo[stateCode].color
         
-        return (!!this.stateInfo[stateCode].stayHomeDayMarker ? 
-            (<ReferenceLine key = {stateCode+"shdm"} x={this.stateInfo[stateCode].stayHomeDayMarker} stroke={color} strokeDasharray="3 3" />)
+        return (!!this.state.stateInfo[stateCode].stayHomeDayMarker ? 
+            (<ReferenceLine key = {stateCode+"shdm"} x={this.state.stateInfo[stateCode].stayHomeDayMarker} stroke={color} strokeDasharray="3 3" />)
             :(""))
     }
 
     plotState(yLabel){
         const stateCode=yLabel.replace(/_.*/, '')
-        const color = this.stateInfo[stateCode].color
+        const color = this.state.stateInfo[stateCode].color
                 
         return (
             <Line connectNulls type="monotone" 
@@ -205,7 +242,7 @@ export default class RegionsChart extends Component{
     }
     plotStateIncrease(yLabel){
         const stateCode=yLabel.replace(/_.*/, '')        
-        const color = this.stateInfo[stateCode].color
+        const color = this.state.stateInfo[stateCode].color
         //console.log("plot : "+yLabel)
         return(
             <Area type='monotone' 
@@ -221,7 +258,7 @@ export default class RegionsChart extends Component{
     }
 
     getGroupNames(arrStates){
-        var arr=arrStates.map(item=>(this.stateInfo[item].stateName))
+        var arr=arrStates.map(item=>(this.state.stateInfo[item].stateName))
         return (arr.join(" / "))
     }
     
@@ -298,7 +335,7 @@ export default class RegionsChart extends Component{
 
     plotLogState(yLabel){
         const stateCode=yLabel.replace(/_.*/, '')
-        const color = this.stateInfo[stateCode].color
+        const color = this.state.stateInfo[stateCode].color
 
         return (
             <Line connectNulls type="monotone" 
@@ -388,11 +425,11 @@ export default class RegionsChart extends Component{
         if(this.state.arrDays === undefined){
             return
         }
-        //                {this.logAllStates()}
         var keyID=0
         return (
             <div>
-                <p/>                    
+                <BarChartGrowthRateAllNow data={this.state.statesSummary} averageDays={this.state.averageDays} mapStates={this.state.stateInfo}/>
+                <p/>                                    
                 {this.logAllStates()}
                 <p style={{paddingBottom:'1px'}}/>
                 <div style={{textIndent: '30px'}}><b>Progression by State</b></div>                
