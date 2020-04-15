@@ -106,7 +106,7 @@ class App extends Component {
             positivegrowthrate:0
          }
          //prep marker day
-         if(stateObj.stayhomeorder && stateObj.stayhomeorder.localeCompare('partial')!=0){
+         if(stateObj.stayhomeorder && stateObj.stayhomeorder.localeCompare('partial')!==0){
             var tmp = new Date(Date.parse(stateObj.stayhomeorder))
             obj.stayHomeDayMarker=tmp.toLocaleString('default', { month: 'short' }) + "/"+ (tmp.getDate())
          }

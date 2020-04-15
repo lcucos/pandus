@@ -2,9 +2,10 @@
 .grid_bar_chart_growth_tooltip {
     display: grid;
     align-content: space-evenly;
-    grid-template-columns: 55px 5px 45px 150px;
+    grid-template-columns: 110px 5px 45px 170px;
     grid-gap: 7x;
     padding: 5px;
+    padding-left: 20px;
     font-size: 0.8rem;
     font-family: Roboto, sans-serif;
   }

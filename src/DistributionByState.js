@@ -23,7 +23,6 @@ function CustomTooltipPie (tooltipProps) {
         {text}
         </div>
 }
-const mapStateCodeToName={}
 
 class SimplePieChart extends Component{
     renderedLabel=false
@@ -163,7 +162,6 @@ class PieChartSummary extends Component{
         }        
         var arrPerc=[]
         for(var m in props.mapStateData){
-            mapStateCodeToName[props.mapStateData[m].stateCode] = props.mapStateData[m].stateName
             arrPerc.push({
                 stateCode:props.mapStateData[m].stateCode,
                 "percentPositiveFromTests": props.mapStateData[m].percentPositiveFromTests,
@@ -178,8 +176,10 @@ class PieChartSummary extends Component{
             dataDeaths:dataDeaths,
             dataPositives:dataPositives,
             arrPerc: arrPerc,
+            mapStateData:props.mapStateData,
             refLine:(props.summary.positives/props.summary.tests*100).toFixed(2)
         }        
+        this.renderTooltipBarChart = this.renderTooltipBarChart.bind(this);
     }
     formatYAxis(tickItem) {
         return tickItem.toFixed(2)
@@ -220,10 +220,10 @@ class PieChartSummary extends Component{
     }
     
     renderTooltipBarChart(props) {
-        if(props.payload.length==0){
+        if(props.payload.length===0){
             return ("")
         }
-        const label = mapStateCodeToName[props.label]
+        const label = this.state.mapStateData[props.label].stateName
 
         return (
             <div className="grid_container_tooltip" >
@@ -234,7 +234,7 @@ class PieChartSummary extends Component{
                              <div align='left'  style={{color:item.color}}>{item.name.replace(/\(.*/gi, '')}</div>
                              <div align='center' style={{color:item.color}}>:</div>
                              <div align='right' style={{color:item.color}}>{item.value.toFixed(2) + " %"}</div> 
-                             <div align='left'   style={{color:item.color, marginLeft:'8px'}}>{item.name.replace(/.*\%|\)/gi, '')}</div>
+                             <div align='left'   style={{color:item.color, marginLeft:'8px'}}>{item.name.replace(/.*%|\)/gi, '')}</div>
                          </>
                  ))}
             </div>

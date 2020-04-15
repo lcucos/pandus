@@ -113,3 +113,8 @@
   font-size: .8rem;
   font-family: Roboto, sans-serif;
 }
+
+.grid-parent {
+  display: grid;
+  grid-template-columns: 1fr 1fr
+}

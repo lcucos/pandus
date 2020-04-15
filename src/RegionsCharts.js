@@ -55,7 +55,6 @@ export default class RegionsChart extends Component{
             arrDays:[],
             showStayAtHomeOrderLine:true,
             showAllStatesFlag:false,
-            averageDays:3,
             stateInfo:props.mapStateData
         }
      }
@@ -93,17 +92,6 @@ export default class RegionsChart extends Component{
         return arrOut
      }
 
-     getFormattedDate(date) {
-        var year = date.getFullYear();
-      
-        var month = (1 + date.getMonth()).toString();
-        month = month.length > 1 ? month : '0' + month;
-      
-        var day = date.getDate().toString();
-        day = day.length > 1 ? day : '0' + day;
-        
-        return year+month + day;
-      }
      prepareData(data){
         //console.dir(data)
         var mapDays={}
@@ -116,11 +104,12 @@ export default class RegionsChart extends Component{
             
             const month = date.toLocaleString('default', { month: 'short' });
             data[i].displayDate= month +"/"+ date.getUTCDate()
-           
+            
             var dayObj = mapDays[data[i].date]                        
             if(dayObj=== undefined){
                 mapDays[data[i].date]=dayObj={
                     displayDate: data[i].displayDate,
+                    actualDate : date,
                     mapPositives:{},
                     count:0
                 }
@@ -166,6 +155,7 @@ export default class RegionsChart extends Component{
         }
         // prepare last day values 
         //console.dir(arrDays)
+  /*
         var totDeaths = 0        
         var log2=Math.log(2)
 
@@ -183,14 +173,18 @@ export default class RegionsChart extends Component{
                 //console.dir(item.stateCode + " : " + this.getFormattedDate(dt))
             }
             var prevPositive = arrDays[arrDays.length - this.state.averageDays -1][item.stateCode+"_positive"]
-            item.positivegrowthrate=  !!prevPositive? Math.log(item.positive/prevPositive)/(this.state.averageDays * log2) : 0
+            var crtPositives = arrDays[arrDays.length-1][item.stateCode+"_positive"]//item.positive
+            item.positivegrowthrate=  !!prevPositive? Math.log(crtPositives/prevPositive)/(this.state.averageDays * log2) : 0
 
+            var crtDeaths = arrDays[arrDays.length-1][item.stateCode+"_deaths"]//item.deaths
+            //console.log(item.stateCode + " : Deaths: " + crtDeaths + " <> " +item.deaths  + ", Positives: " + crtPositives + " <> " + item.positive)
             var prevDeaths = arrDays[arrDays.length - this.state.averageDays -1][item.stateCode+"_deaths"]
-            item.deathgrowthrate=  !!prevDeaths? Math.log(item.deaths/prevDeaths)/(this.state.averageDays * log2) : 0
+            item.deathgrowthrate=  !!prevDeaths? Math.log(crtDeaths/prevDeaths)/(this.state.averageDays * log2) : 0
         }
         
-        //console.log("Total deaths = " + totDeaths)
-        
+        console.log("Total deaths = " + totDeaths)
+*/        
+        //console.dir(arrDays)
         this.setState({
             arrDays:arrDays,
             arrRelDays:this.prepareLogData(arrDays),
@@ -350,7 +344,7 @@ export default class RegionsChart extends Component{
     }
 
     renderTooltipAllStatesChart(props) {
-        if(props.payload.length==0){
+        if(props.payload.length===0){
             return ("")
         }
         return (
@@ -375,7 +369,7 @@ export default class RegionsChart extends Component{
             <div ><b>Progression All States</b></div>                
             <div className='recharts-cartesian-axis'>(log scale)</div>
             <p style={{paddingBottom:'1px'}}/>
-            <div className='recharts-cartesian-axis' className='row-components'>
+            <div className='row-components'>
                 <div className='recharts-cartesian-axis'>
                 Positives
             <ComposedChart
@@ -425,11 +419,17 @@ export default class RegionsChart extends Component{
         if(this.state.arrDays === undefined){
             return
         }
+        //console.log("render: regionsCharts : " + this.state.arrDays.length)
+
         var keyID=0
         return (
             <div>
-                <BarChartGrowthRateAllNow data={this.state.statesSummary} averageDays={this.state.averageDays} mapStates={this.state.stateInfo}/>
-                <p/>                                    
+                {this.state.arrDays.length>0 ? (
+                <>
+                    <BarChartGrowthRateAllNow data={this.state.statesSummary} arrDays={this.state.arrDays} mapStates={this.state.stateInfo} configIndex={0}/>
+                </>
+                ):""}
+                <p style={{paddingBottom:'10px'}}/>
                 {this.logAllStates()}
                 <p style={{paddingBottom:'1px'}}/>
                 <div style={{textIndent: '30px'}}><b>Progression by State</b></div>                

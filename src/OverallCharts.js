@@ -7,7 +7,7 @@
 
 import React, { Component } from 'react'
 import './styles.css';
-import {Area, Line, XAxis, YAxis, Tooltip, Legend, ComposedChart} from 'recharts';
+import {Area, Line, XAxis, YAxis, Tooltip, ComposedChart} from 'recharts';
 import { FormControl,FormControlLabel,Radio, RadioGroup} from '@material-ui/core';
 
 
