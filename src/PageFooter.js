@@ -20,7 +20,8 @@ export default  class PageFooter extends Component{
     render(){
        return (
         <div>
-                   </div>
+           <HTMLCommentBox/>
+        </div>
        );
     }
     /*<hr/><p>

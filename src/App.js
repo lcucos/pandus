@@ -18,6 +18,15 @@ import statesGeo from "./data/maps/us/states-10m.json"
 import RegionsChart from "./RegionsCharts.js"
 import PieChartSummary from './DistributionByState.js'
 
+import { css } from "@emotion/core";
+import GridLoader from "react-spinners/GridLoader";
+
+const spinnerOverride = css`
+  display: block;
+  margin: 0 auto;
+  border-color: #2a1b80;
+`;
+
 Number.prototype.round = function(places) {
    return +(Math.round(this + "e+" + places)  + "e-" + places);
  }
@@ -25,7 +34,7 @@ Number.prototype.round = function(places) {
 class App extends Component {
 
    constructor(props) {
-      super(props);
+      super(props); 
 
       this.state = {
         arrStates:[],
@@ -164,7 +173,17 @@ class App extends Component {
       
       var sizeMap = Object.keys(this.state.mapStatesByGeoId).length;
       if (this.state.isLoading || sizeMap===0) {
-        return <p>Loading data...</p>;
+        return (
+         <center>
+            <p style={{paddingBottom:'50px'}}/>
+                 <GridLoader
+          css={spinnerOverride}
+          size={12}
+          color={"#2a1b80"}
+          loading={this.state.loading}          
+        />
+            </center>
+         )
       }      
       return ( 
          <center>

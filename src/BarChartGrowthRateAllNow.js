@@ -42,7 +42,7 @@ export default class BarChartGrowthRateAllNow extends Component{
       {
         yKey    : "deathgrowthrate_sho",
         legend  : "Deaths SHO", 
-        color   : "#e2884d" 
+        color   : "#a8c100" 
       }
     ]
     defaultAverageDays      = 3

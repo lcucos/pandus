@@ -27,6 +27,7 @@
     "react-share": "^4.1.0",
     "react-simple-maps": "^2.0.0",
     "react-social-embed": "0.0.3",
+    "react-spinners": "^0.8.1",
     "react-table": "^7.0.0",
     "react-tooltip": "^4.1.2",
     "recharts": "^1.8.5",
