@@ -7,6 +7,7 @@
 
 import React, { Component } from 'react'
 import './styles.css';
+import HTMLCommentBox from './HTMLCommentBox.js'
 
 export default  class PageFooter extends Component{
 
@@ -14,11 +15,12 @@ export default  class PageFooter extends Component{
        super(props);
        this.summary = props.lastUpdate
     }
+    //<HTMLCommentBox/>
 
     render(){
        return (
         <div>
-        </div>
+                   </div>
        );
     }
     /*<hr/><p>

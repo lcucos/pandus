@@ -94,7 +94,7 @@
 .grid_bar_chart_tooltip {
   display: grid;
   align-content: space-evenly;
-  grid-template-columns: 80px 5px 60px 75px;
+  grid-template-columns: 90px 5px 60px 75px;
   grid-gap: 7x;
   padding: 5px;
   padding-left: 30px;
@@ -102,6 +102,15 @@
   font-family: Roboto, sans-serif;
 }
 
+.grid_bar_chart_tooltip_rate {
+  display: grid;
+  align-content: space-evenly;
+  grid-template-columns: 140px 5px 60px;
+  grid-gap: 7x;
+  padding: 5px;
+  font-size: 0.8rem;
+  font-family: Roboto, sans-serif;
+}
 
 .div_align_vmiddle > * {
   vertical-align: middle;

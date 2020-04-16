@@ -46,9 +46,9 @@ export default class BarChartGrowthRateAllNow extends Component{
       }
     ]
     defaultAverageDays      = 3
-
+    xDaysAfter              = 7
     defaultSortFieldIndex   = 0 // positive
-
+    mapRenderedData = {}
     sortField=this.barInfo[this.defaultSortFieldIndex].yKey
     config=[
         {
@@ -68,17 +68,19 @@ export default class BarChartGrowthRateAllNow extends Component{
         // create a list of configurations
         this.state = {
             data:props.data,
-            configIndex:props.configIndex,
             averageDays:this.defaultAverageDays,
             mapStates:props.mapStates,
             sortMode:this.defaultSortFieldIndex,
             dataShowMode:'ns',
             arrDays:props.arrDays,            
-            renderData : this.computeGrowth(props.arrDays, props.data, this.defaultAverageDays, this.config[props.configIndex])
+            renderData : this.computeGrowth(props.arrDays, props.data, this.defaultAverageDays)
         }
         this.sortSelectionChange = this.sortSelectionChange.bind(this);
+        this.daysAfterChange = this.daysAfterChange.bind(this);
         this.radioChangeSelectData =this.radioChangeSelectData.bind(this)
         this.renderTooltipBarChart = this.renderTooltipBarChart.bind(this)
+        this.renderTooltipBarChartGrowthRatio = this.renderTooltipBarChartGrowthRatio.bind(this)
+        
         this.sortData = this.sortData.bind(this)
     }
 
@@ -118,17 +120,42 @@ export default class BarChartGrowthRateAllNow extends Component{
             var lastElem = arrDays.length - delta
             obj.positivegrowthrate_sho = this.getGrowthRate(lastElem, arrDays, averageDays, item.stateCode+"_positive")
             obj.deathgrowthrate_sho    = this.getGrowthRate(lastElem, arrDays, averageDays, item.stateCode+"_deaths")
+
+            // compute growth rate at Xdays after
+            var absXDays=lastElem + this.xDaysAfter
+            if((absXDays - averageDays)>=0 && absXDays < arrDays.length){
+
+                obj.positivegrowthrate_x = this.getGrowthRate(absXDays, arrDays, averageDays, item.stateCode+"_positive")
+                obj.deathgrowthrate_x    = this.getGrowthRate(absXDays, arrDays, averageDays, item.stateCode+"_deaths")
+                if(obj.positivegrowthrate_sho > 0){
+                    obj.positiveXdaysAfterRatio=100*((obj.positivegrowthrate_sho-obj.positivegrowthrate_x)/obj.positivegrowthrate_sho)
+                }
+                if(obj.deathgrowthrate_sho > 0){
+                    obj.deathXdaysAfterRatio=100*((obj.deathgrowthrate_sho-obj.deathgrowthrate_x)/obj.deathgrowthrate_sho)
+                }
+                /*
+                console.log(
+                        item.stateCode +
+                        " " + arrDays[absXDays].actualDate + 
+                        " positive="+obj.positivegrowthrate_x+
+                        " vs "+
+                        " sho " + dt +
+                        " positive=" + obj.positivegrowthrate_sho + 
+                        " ratio="+ obj.positiveXdaysAfterRatio)
+                        */
+            }
         }else{
             // no Stay-At-Home order
             return null
         }
     }
 
-    computeGrowth(arrDays, newStateSummary,  averageDays, crtConfig){
+    computeGrowth(arrDays, newStateSummary,  averageDays){
         if(arrDays.length === 0){
             return null
         }
         var renderData=[]
+        var mapRenderedData={}
         for (var i = 0; i < newStateSummary.length; i++) {
             var item = newStateSummary[i]
             var obj ={
@@ -137,7 +164,9 @@ export default class BarChartGrowthRateAllNow extends Component{
             this.getIndexReference_SHO(item, arrDays, averageDays, obj)
             this.getIndexReference_Last(item, arrDays, averageDays, obj)
             renderData.push(obj);
+            mapRenderedData[item.stateCode]=obj
         }
+        this.mapRenderedData = mapRenderedData
         return renderData
         //console.log("Total deaths = " + totDeaths)
     }
@@ -145,10 +174,61 @@ export default class BarChartGrowthRateAllNow extends Component{
     sortbyBoth(a,b){
         return a["positivegrowthrate"]+a["deathgrowthrate"] < b["positivegrowthrate"] + b["deathgrowthrate"]? -1 : 1
     }
+
     sortData(a,b){
         var a1=!!a[this.sortField]?a[this.sortField]:-1
         var b1=!!b[this.sortField]?b[this.sortField]:-1
         return a1 < b1? -1 : 1
+    }
+
+    addTooltipItem(name, value, color,digit){
+        if(value===undefined){
+            return ("")
+        }
+        return(
+        <>
+        <div align='left'  style={{color:color}}>{name}</div>
+        <div align='center' style={{color:color}}>:</div>
+        <div align='right' style={{color:color}}>{(value).toFixed(digit)} %</div> 
+        </>
+        )
+    }
+    renderTooltipBarChartGrowthRatio(props){
+        var label = props.label
+        if(label===undefined){
+            return
+        }
+        var obj = this.mapRenderedData[label]
+        if(obj===undefined){
+            return
+        }
+        var stateObj = this.state.mapStates[props.label]
+        //console.dir(props)
+        /*
+                    {this.addTooltipItem("Positives SHO",obj.positivegrowthrate_sho, Colors.positive,4)}
+            {this.addTooltipItem("Positives SHO + " +this.xDaysAfter,obj.positivegrowthrate_x, Colors.positive,4)}
+            {this.addTooltipItem("Deaths SHO",obj.deathgrowthrate_sho, Colors.death,4)}
+            {this.addTooltipItem("Deaths SHO + " +this.xDaysAfter,obj.deathgrowthrate_x, Colors.death,4)}
+
+        */
+        if(props.payload.length > 0){
+            label = this.state.mapStates[props.label].stateName
+        }else{
+            return
+        }
+        return (
+            <div className="grid_container_tooltip" >
+            <div style={{textAlign:"center"}}>{label}</div>
+            <div className="grid_bar_chart_tooltip_rate">
+            {this.addTooltipItem("Positives Decrease", props.payload[0]!==undefined ? props.payload[0].value:undefined, Colors.positive, 2)}
+            {this.addTooltipItem("Deaths Decrease" ,props.payload[1]!==undefined? props.payload[1].value:undefined, Colors.death,2)}
+            </div>
+            <div align="left" style={{paddingLeft:'20px'}}><i>
+            Stay at Home Order : {!!stateObj && stateObj.stayhomeorder? stateObj.stayhomeorder : "Not issued"}
+            </i></div>
+            </div>
+        )
+
     }
 
     renderTooltipBarChart(props) {
@@ -178,7 +258,13 @@ export default class BarChartGrowthRateAllNow extends Component{
             </i></div>
             </div>
         )
-      }
+    }
+
+    daysAfterChange(e){        
+        this.xDaysAfter = e.value
+        var arrData = this.computeGrowth(this.state.arrDays, this.state.data, this.state.averageDays)
+        this.setState({renderData : arrData})
+    }
 
     sortSelectionChange(e) {        
         this.setState({sortMode: e.value});
@@ -205,7 +291,7 @@ export default class BarChartGrowthRateAllNow extends Component{
                    }
         }else{
             return {
-                    title:this.config[0].title + " & " + this.config[1].title,
+                    title:this.config[0].title + " v.s. " + this.config[1].title,
                     sortBy:this.state.sortMode,
                     sortOptions:this.barInfo
                    }
@@ -219,6 +305,61 @@ export default class BarChartGrowthRateAllNow extends Component{
         }
         return out
     }
+
+    renderGrothRateRatioAfterXDays(){
+        const xLabel = "stateCode"
+        const yKeyP = "positiveXdaysAfterRatio" 
+        const yKeyD = "deathXdaysAfterRatio" 
+        
+        const legendP="Positives"
+        const legendD="Deaths"
+
+        const daysAfterOptions=[-14, -7,-3,1,3,7,14,21]
+        return (
+            <div align="center">
+            <p style={{paddingBottom:'30px'}}/>
+
+        <b>Growth Rate Decrease (%) between SHO and {Math.abs(this.xDaysAfter)} days {this.xDaysAfter>0?"after":"before"}</b>
+            <div className='recharts-cartesian-axis'>(based on {this.state.averageDays} days average)</div>
+            <table width="100%">
+            <tbody>
+            <tr>
+              <td style={{width: '1050px'}}> 
+              </td>
+            <td aling="right" className='recharts-cartesian-axis'>
+                Days After SHO  
+            </td>
+            <td>
+            <Dropdown align="right" className='recharts-cartesian-axis' 
+                onChange={this.daysAfterChange}  
+                options={daysAfterOptions} 
+                value={""+this.xDaysAfter}
+                style={{width:"100px"}} 
+                />
+            </td>
+          </tr>
+          </tbody>
+        </table>
+
+            <BarChart
+            className='recharts-cartesian-axis'
+            width={1280}           
+            height={250}
+            data={this.state.renderData}
+            isAnimationActive={false}  
+            margin={{top: 10, right: 5, left: 0, bottom: 5}}
+       >
+           <XAxis dataKey={xLabel} tick={<CustomizedAxisTick/>} minTickGap={-5}/>
+           <YAxis/>
+           <Tooltip content={this.renderTooltipBarChartGrowthRatio}/>
+           <Legend />           
+               <Bar dataKey={yKeyP} stackId="a" name={legendP} stroke={Colors.positive} fill={Colors.positive}/>
+               <Bar dataKey={yKeyD} stackId="a" name={legendD} stroke={Colors.death} fill={Colors.death}/>
+          </BarChart>
+          </div>
+        )
+    }
+
     render(){     
         if(this.state.renderData == null)   {
             return ("")
@@ -240,7 +381,7 @@ export default class BarChartGrowthRateAllNow extends Component{
         return(
             <div align="center">
             <p style={{paddingBottom:'10px'}}/>
-            <b>Growth Rate {currentDataSelection.title}</b>
+            <b>Growth Rate : {currentDataSelection.title}</b>
             <br/>
             <div className='recharts-cartesian-axis'>(based on {this.state.averageDays} days average)</div>
             
@@ -250,7 +391,7 @@ export default class BarChartGrowthRateAllNow extends Component{
             <td style={{width: '1050px'}}> 
 
                     <div align="left" className='recharts-cartesian-axis' style={{paddingLeft:'60px'}}>
-                        Show 
+                         
                     <input type="radio"
                         value="n"
                         checked={this.state.dataShowMode === "n"}
@@ -307,6 +448,7 @@ export default class BarChartGrowthRateAllNow extends Component{
            ):""}
 
           </BarChart>
+          {this.renderGrothRateRatioAfterXDays()}
           </div>
         )
     }    
