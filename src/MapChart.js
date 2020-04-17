@@ -14,7 +14,7 @@ import {
   Marker,
   Annotation
 } from "react-simple-maps";
-import {Colors} from './Colors.js'
+import {Colors, ColorsTests} from './Colors.js'
 import ReactTooltip from "react-tooltip";
 
 const offsets = {
@@ -41,7 +41,7 @@ class MapChart extends React.Component {
   width=1040
   height=660
   legendX=740
-  legendY=520
+  legendY=460
 
 
   constructor(props){
@@ -226,7 +226,7 @@ class MapChart extends React.Component {
     }
     var people = 1000
     var sizeT = radiusPerUnit * Math.sqrt(people/unitSize)
-    var sY = this.legendY - 15
+    var sY = this.legendY -25
     var sX = this.legendX + sizeT
     return (
       <g className='recharts-cartesian-axis' style={{fontSize: '0.6rem', fill:'gray'}}>
@@ -237,7 +237,12 @@ class MapChart extends React.Component {
       </g>
       )
   }
-  
+  renderBucketLegend(){
+    
+    for(var i=0;i<this.summary.testBucketCount;i++){
+
+    }
+  }
   drawLegendTests(){
     if(! this.getShowDataFlag("tests")){
       return
@@ -246,6 +251,31 @@ class MapChart extends React.Component {
     var sY = this.legendY
     const testingGradientColor="url(#testingColor)"
     const color=this.summary.maxTestsColor
+
+    if(this.summary.testBucketCount > 0){
+      var arr=[]
+      for(var i=0;i<this.summary.testBucketCount;i++){
+        arr.push({
+          bucketTextStart:Number(this.summary.testsBucketSize*i + 1).toLocaleString(),
+          bucketTextStop:Number(this.summary.testsBucketSize*(i+1)).toLocaleString() ,
+          color : ColorsTests[Math.floor(this.summary.testsBucketSize*i/this.summary.testsBucketSize)],
+          index: i
+        })
+      }
+      return (
+        <g className='recharts-cartesian-axis' style={{fontSize: '0.6rem', fill:'gray'}}>
+          <text x={sX+41} y={sY+4} dominantBaseline="central" textAnchor="start">Tests @ 1 Mil</text>
+          {arr.map(b =>(
+            <>
+            <text x={sX+55} y={sY+18 +12*b.index} dominantBaseline="central" textAnchor="end">{b.bucketTextStart}</text>
+            <text x={sX+75} y={sY+18 +12*b.index} dominantBaseline="central" textAnchor="end">to</text>
+            <text x={sX+115} y={sY+18 +12*b.index} dominantBaseline="central" textAnchor="end">{b.bucketTextStop}</text>
+            <rect width="10" height="10" x={sX+2} y={sY + 15 +12*b.index} fillOpacity={1} fill={b.color} strokeWidth="1" stroke='lightgray'/>
+            </>
+        ))}
+        </g>
+      )
+    }
     return(
       <g className='recharts-cartesian-axis' style={{fontSize: '0.6rem', fill:'gray'}}>
       <defs>

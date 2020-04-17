@@ -20,6 +20,8 @@ import PieChartSummary from './DistributionByState.js'
 
 import { css } from "@emotion/core";
 import GridLoader from "react-spinners/GridLoader";
+import {ColorsTests} from "./Colors.js"
+
 
 const spinnerOverride = css`
   display: block;
@@ -132,18 +134,36 @@ class App extends Component {
       var maxTestScale =Math.pow(10,Math.ceil(Math.log10(maxTests)-1))      
       maxTestScale = maxTestScale*Math.ceil(maxTests/maxTestScale)
       
+
+      // testBucketCount controls the type of coloring scheme we use for tests
+      // 0: means we use a continuous gradient 
+      this.summary.testsBucketSize=this.getRange(maxTests)/ColorsTests.length      
+      this.summary.testBucketCount=ColorsTests.length 
+
       // compute percent of totals
       for (i = 0; i < arrStates.length; i++) {
          arrStates[i].percentDeaths=arrStates[i].deaths/this.summary.deaths
          arrStates[i].populationPercent=arrStates[i].population/this.summary.totPopulation * 100
          // set color
-         arrStates[i].testColor = this.getScaleColor(arrStates[i].testsByUnit,p)
+         arrStates[i].testColor = this.getScaleColor(arrStates[i].testsByUnit, p)
       }
       this.summary.maxTestsScale=maxTestScale
-      this.summary.maxTestsColor = this.getScaleColor(this.summary.maxTestsScale,p)
+      this.summary.maxTestsColor = this.getScaleColor(this.summary.maxTestsScale, p)
+      
       this.setState({arrStates:arrStates,mapStatesByGeoId:mapStatesByGeoId,mapStatesByStateCode:mapStatesByStateCode,isLoading:false})
    }
+
+   getRange(maxTests){
+      var maxTestScale  =Math.pow(10,Math.ceil(Math.log10(maxTests))-1) 
+       var retval = Math.ceil(maxTests/maxTestScale)*maxTestScale
+       retval = (retval-maxTestScale/2 > maxTests)?retval-maxTestScale*0.5:retval
+       return retval
+   }
+
    getScaleColor(value, factor){
+      if(this.summary.testBucketCount > 0){
+         return ColorsTests[Math.floor(value/this.summary.testsBucketSize)]
+      }
       var v1 =  (256-Math.ceil(256*value/factor)).toString(16)
       return "#"+v1+v1+v1
    }
@@ -175,13 +195,16 @@ class App extends Component {
       if (this.state.isLoading || sizeMap===0) {
         return (
          <center>
-            <p style={{paddingBottom:'50px'}}/>
+            <div style = {{ width: '1280px' }} >
+            <PageHeader           summary  = {this.summary} showFlags={this.showFlags}/>
+            <p style={{paddingBottom:'80px'}}/>
                  <GridLoader
-          css={spinnerOverride}
-          size={12}
-          color={"#2a1b80"}
-          loading={this.state.loading}          
-        />
+                  css={spinnerOverride}
+                  size={12}
+                  color={"#2a1b80"}
+                  loading={this.state.loading}          
+                 />
+            </div>
             </center>
          )
       }      

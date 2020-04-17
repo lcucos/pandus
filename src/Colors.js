@@ -9,3 +9,10 @@ export const Colors = {
     mapDefault:'#f7f7f7'
 }
 
+export const ColorsTests = [
+    '#f4f4f4',
+    '#dbdbdb',
+    '#bdbdbd',
+    '#9b9a9a',
+    '#828282',
+]
