@@ -354,8 +354,8 @@ export default class RegionsChart extends Component{
             <div className="grid_container_tooltip" >
             <div style={{textAlign:"center"}}>{props.label}</div>
             <div className="grid_allstates_chart_tooltip">
-            {props.payload.map(item=>(<><div key={1} align='left' style={{color:item.color}}>{item.name}</div>
-                                        <div key={2} align='left' style={{color:item.color}}>: {Number(item.value).toLocaleString()}</div> </>))}
+            {props.payload.map(item=>(<><div key={item.name} align='left' style={{color:item.color}}>{item.name}</div>
+                                        <div key={item.value} align='left' style={{color:item.color}}>: {Number(item.value).toLocaleString()}</div> </>))}
             </div>
             </div>
         )

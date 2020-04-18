@@ -30,36 +30,6 @@ class CustomizedAxisTick extends PureComponent {
 
 const log2=Math.log(2)
 
-const PrettoSlider = {
-    root: {
-      color: '#52af77',
-      height: 8,
-    },
-    thumb: {
-      height: 24,
-      width: 24,
-      backgroundColor: '#fff',
-      border: '2px solid currentColor',
-      marginTop: -8,
-      marginLeft: -12,
-      '&:focus, &:hover, &$active': {
-        boxShadow: 'inherit',
-      },
-    },
-    active: {},
-    valueLabel: {
-      left: 'calc(-50% + 4px)',
-    },
-    track: {
-      height: 8,
-      borderRadius: 4,
-    },
-    rail: {
-      height: 8,
-      borderRadius: 4,
-    },
-  };
-
 export default class BarChartGrowthRateAllNow extends Component{
     barInfo=[{
         yKey    : "positivegrowthrate",
@@ -83,7 +53,7 @@ export default class BarChartGrowthRateAllNow extends Component{
       }
     ]
     defaultAverageDays      = 3
-    xDaysAfter              = 6
+    xDaysAfter              = 7
     defaultSortFieldIndex   = 0 // positive
     mapRenderedData = {}
     sortField=this.barInfo[this.defaultSortFieldIndex].yKey
@@ -119,7 +89,7 @@ export default class BarChartGrowthRateAllNow extends Component{
         this.radioChangeSelectData =this.radioChangeSelectData.bind(this)
         this.renderTooltipBarChart = this.renderTooltipBarChart.bind(this)
         this.renderTooltipBarChartGrowthRatio = this.renderTooltipBarChartGrowthRatio.bind(this)
-        
+        this.valueSliderText= this.valueSliderText.bind(this)
         this.sortData = this.sortData.bind(this)
     }
 
@@ -234,9 +204,9 @@ export default class BarChartGrowthRateAllNow extends Component{
         }
         return(
         <>
-        <div key={1} align='left'  style={{color:color}}>{name}</div>
-        <div key={2} align='center' style={{color:color}}>:</div>
-        <div key={3} align='right' style={{color:color}}>{(value).toFixed(digit)} %</div> 
+        <div key={name} align='left'  style={{color:color}}>{name}</div>
+        <div key={name+":"} align='center' style={{color:color}}>:</div>
+        <div key={value} align='right' style={{color:color}}>{(value).toFixed(digit)} %</div> 
         </>
         )
     }
@@ -308,14 +278,6 @@ export default class BarChartGrowthRateAllNow extends Component{
         )
     }
 
-    daysAfterChange(event, value){        
-        if(this.xDaysAfter===value){
-            return
-        }
-        this.xDaysAfter = value
-        var arrData = this.computeGrowth(this.state.arrDays, this.state.data, this.state.averageDays)
-        this.setState({renderData : arrData})
-    }
 
     sortSelectionChange(e) {        
         this.setState({sortMode: e.value});
@@ -365,7 +327,7 @@ export default class BarChartGrowthRateAllNow extends Component{
         const legendP="Positives"
         const legendD="Deaths"
 
-        const daysAfterOptions=[-14, -7,-3,1,3,7,14,21]
+        const daysAfterOptions=[-14,-10,-7,-3,1,3,7,10,14,21]
         return (
             <div align="center">
             <p style={{paddingBottom:'30px'}}/>
@@ -407,19 +369,38 @@ export default class BarChartGrowthRateAllNow extends Component{
         )
     }
 
-    discreteSlider() {      
+    marksIndex = [-14,-10,-7,-5, -3, -1, 1, 3, 5, 7, 10, 14, 18, 21]
+
+    daysAfterChange(event, valueIndex){        
+        var value = this.marksIndex[valueIndex]
+        if(this.xDaysAfter===value){
+            return
+        }
+        this.xDaysAfter = value
+        var arrData = this.computeGrowth(this.state.arrDays, this.state.data, this.state.averageDays)
+        this.setState({renderData : arrData})
+    }
+
+    valueSliderText(value) {
+        return this.marksIndex[value];
+    }
+
+    discreteSlider() { 
+
         return (
           <div  style={{width:'150px'}}>
-            <Slider className='PrettoSlider'
-              defaultValue={6}
+            <Slider 
+              defaultValue={9}
               valueLabelDisplay="on"
               aria-labelledby="discrete-slider"
-              valueLabelDisplay="auto"
+              valueLabelDisplay="on"
+              getAriaValueText={this.valueSliderText}
+              valueLabelFormat={this.valueSliderText}
               onChange = {this.daysAfterChange}
-              step={3}
               marks
-              min={-15}
-              max={21}
+              step={1}
+              min={0}
+              max={this.marksIndex.length-1}
             />
           </div>
         );
@@ -465,7 +446,7 @@ export default class BarChartGrowthRateAllNow extends Component{
                         <ToggleButton key={1} value={'s'} aria-label="left aligned">
                         <font color='black'>SHO</font>
                         </ToggleButton>
-                        <ToggleButton key={1} value={'ns'} aria-label="left aligned">
+                        <ToggleButton key={2} value={'ns'} aria-label="left aligned">
                         <font color='black'>Both</font>
                         </ToggleButton>
                     </ToggleButtonGroup>
@@ -480,12 +461,12 @@ export default class BarChartGrowthRateAllNow extends Component{
                 Sort by 
             </td>
             <td>
-                        <Dropdown align="right" className='recharts-cartesian-axis' 
-                          onChange={this.sortSelectionChange}  
-                          options={sortOptions} 
-                          value={sortOptions[currentDataSelection.sortBy]} 
-                          style={{width:"150px"}} 
-                          />
+                <Dropdown align="right" className='recharts-cartesian-axis' 
+                    onChange={this.sortSelectionChange}  
+                    options={sortOptions} 
+                    value={sortOptions[currentDataSelection.sortBy]} 
+                    style={{width:"150px"}} 
+                    />
             </td>
           </tr>
           </tbody>

@@ -200,6 +200,7 @@ export default class ScatterChartAtSHO extends Component{
         const axes = this.axes
         return (
             <div>
+                <p style={{paddingBottom:'30px'}}/>
                 <div align="center">
                     <p style={{paddingBottom:'10px'}}/>
                     <b>{axes[this.axesSetup[0]].name}, {axes[this.axesSetup[1]].name} and {axes[this.axesSetup[2]].name} when Stay-At-Home Order (SHO) was issued</b>

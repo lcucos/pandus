@@ -189,7 +189,6 @@ class App extends Component {
       if (error) {
         return <p>{error.message}</p>;
       }
-      console.log("Environment: "+(!!process.env.REACT_APP_ENV_NAME?process.env.REACT_APP_ENV_NAME : "production"))
       
       var sizeMap = Object.keys(this.state.mapStatesByGeoId).length;
       if (this.state.isLoading || sizeMap===0) {
@@ -208,6 +207,7 @@ class App extends Component {
             </center>
          )
       }      
+      //console.log("Environment: "+(!!process.env.REACT_APP_ENV_NAME?process.env.REACT_APP_ENV_NAME : "production"))
       return ( 
          <center>
          <div style = {{ width: '1280px' }} >
