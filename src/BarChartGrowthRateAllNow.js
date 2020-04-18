@@ -5,7 +5,15 @@ import './styles.css';
 import './BarChartGrowthRateAllNow.css';
 import Dropdown from 'react-dropdown';
 import 'react-dropdown/style.css';
+import ScatterChartAtSHO from './ScatterChartAtSHO.js'
+import Grid from '@material-ui/core/Grid';
+import ToggleButton from '@material-ui/lab/ToggleButton';
+import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
+import { makeStyles } from '@material-ui/core/styles';
+import Typography from '@material-ui/core/Typography';
+import Slider from '@material-ui/core/Slider';
 
+  
 class CustomizedAxisTick extends PureComponent {
     render() {
       const {
@@ -22,6 +30,35 @@ class CustomizedAxisTick extends PureComponent {
 
 const log2=Math.log(2)
 
+const PrettoSlider = {
+    root: {
+      color: '#52af77',
+      height: 8,
+    },
+    thumb: {
+      height: 24,
+      width: 24,
+      backgroundColor: '#fff',
+      border: '2px solid currentColor',
+      marginTop: -8,
+      marginLeft: -12,
+      '&:focus, &:hover, &$active': {
+        boxShadow: 'inherit',
+      },
+    },
+    active: {},
+    valueLabel: {
+      left: 'calc(-50% + 4px)',
+    },
+    track: {
+      height: 8,
+      borderRadius: 4,
+    },
+    rail: {
+      height: 8,
+      borderRadius: 4,
+    },
+  };
 
 export default class BarChartGrowthRateAllNow extends Component{
     barInfo=[{
@@ -46,7 +83,7 @@ export default class BarChartGrowthRateAllNow extends Component{
       }
     ]
     defaultAverageDays      = 3
-    xDaysAfter              = 7
+    xDaysAfter              = 6
     defaultSortFieldIndex   = 0 // positive
     mapRenderedData = {}
     sortField=this.barInfo[this.defaultSortFieldIndex].yKey
@@ -73,8 +110,10 @@ export default class BarChartGrowthRateAllNow extends Component{
             sortMode:this.defaultSortFieldIndex,
             dataShowMode:'ns',
             arrDays:props.arrDays,            
-            renderData : this.computeGrowth(props.arrDays, props.data, this.defaultAverageDays)
         }
+        var renderData = this.computeGrowth(props.arrDays, props.data, this.defaultAverageDays)
+        this.state.renderData = renderData
+
         this.sortSelectionChange = this.sortSelectionChange.bind(this);
         this.daysAfterChange = this.daysAfterChange.bind(this);
         this.radioChangeSelectData =this.radioChangeSelectData.bind(this)
@@ -120,7 +159,15 @@ export default class BarChartGrowthRateAllNow extends Component{
             var lastElem = arrDays.length - delta
             obj.positivegrowthrate_sho = this.getGrowthRate(lastElem, arrDays, averageDays, item.stateCode+"_positive")
             obj.deathgrowthrate_sho    = this.getGrowthRate(lastElem, arrDays, averageDays, item.stateCode+"_deaths")
+            
+            obj.positives_sho = arrDays[lastElem][item.stateCode+"_positive"]
+            obj.positives_pm_sho = Math.round(1000000*arrDays[lastElem][item.stateCode+"_positive"]/this.state.mapStates[item.stateCode].population)
 
+            obj.deaths_sho = arrDays[lastElem][item.stateCode+"_deaths"]
+            obj.deaths_pm_sho = Math.round(1000000*arrDays[lastElem][item.stateCode+"_deaths"]/this.state.mapStates[item.stateCode].population)
+
+            obj.discovery_sho = 100 * (arrDays[lastElem][item.stateCode+"_positive"]/arrDays[lastElem][item.stateCode+"_tests"])
+            //console.dir(obj)
             // compute growth rate at Xdays after
             var absXDays=lastElem + this.xDaysAfter
             if((absXDays - averageDays)>=0 && absXDays < arrDays.length){
@@ -187,12 +234,13 @@ export default class BarChartGrowthRateAllNow extends Component{
         }
         return(
         <>
-        <div align='left'  style={{color:color}}>{name}</div>
-        <div align='center' style={{color:color}}>:</div>
-        <div align='right' style={{color:color}}>{(value).toFixed(digit)} %</div> 
+        <div key={1} align='left'  style={{color:color}}>{name}</div>
+        <div key={2} align='center' style={{color:color}}>:</div>
+        <div key={3} align='right' style={{color:color}}>{(value).toFixed(digit)} %</div> 
         </>
         )
     }
+
     renderTooltipBarChartGrowthRatio(props){
         var label = props.label
         if(label===undefined){
@@ -223,7 +271,7 @@ export default class BarChartGrowthRateAllNow extends Component{
             {this.addTooltipItem("Positives Decrease", props.payload[0]!==undefined ? props.payload[0].value:undefined, Colors.positive, 2)}
             {this.addTooltipItem("Deaths Decrease" ,props.payload[1]!==undefined? props.payload[1].value:undefined, Colors.death,2)}
             </div>
-            <div align="left" style={{paddingLeft:'20px'}}><i>
+            <div key={4} align="left" style={{paddingLeft:'20px'}}><i>
             Stay at Home Order : {!!stateObj && stateObj.stayhomeorder? stateObj.stayhomeorder : "Not issued"}
             </i></div>
             </div>
@@ -245,10 +293,10 @@ export default class BarChartGrowthRateAllNow extends Component{
             <div className="grid_bar_chart_growth_tooltip">
             {props.payload.map(item=>(
                          <>
-                             <div align='left'  style={{color:item.color}}>{item.name}</div>
-                             <div align='center' style={{color:item.color}}>:</div>
-                             <div align='right' style={{color:item.color}}>{item.value.toFixed(4)}</div> 
-                             <div align='left'   style={{color:item.color, marginLeft:'8px'}}> {(item.value!==0 ? " = "+(1/item.value).toFixed(2) + " days to double": "") + 
+                             <div key={1} align='left'  style={{color:item.color}}>{item.name}</div>
+                             <div key={2} align='center' style={{color:item.color}}>:</div>
+                             <div key={3} align='right' style={{color:item.color}}>{item.value.toFixed(4)}</div> 
+                             <div key={4} align='left'   style={{color:item.color, marginLeft:'8px'}}> {(item.value!==0 ? " = "+(1/item.value).toFixed(2) + " days to double": "") + 
                                                                                                 (item.value < 0?" (data error or correction)":"")}</div>
                          </>
                  ))}
@@ -260,8 +308,11 @@ export default class BarChartGrowthRateAllNow extends Component{
         )
     }
 
-    daysAfterChange(e){        
-        this.xDaysAfter = e.value
+    daysAfterChange(event, value){        
+        if(this.xDaysAfter===value){
+            return
+        }
+        this.xDaysAfter = value
         var arrData = this.computeGrowth(this.state.arrDays, this.state.data, this.state.averageDays)
         this.setState({renderData : arrData})
     }
@@ -272,7 +323,7 @@ export default class BarChartGrowthRateAllNow extends Component{
 
     radioChangeSelectData(e) {
         this.setState({
-            dataShowMode: e.currentTarget.value
+            dataShowMode: e
         });
     }
 
@@ -324,18 +375,14 @@ export default class BarChartGrowthRateAllNow extends Component{
             <table width="100%">
             <tbody>
             <tr>
-              <td style={{width: '1050px'}}> 
+              <td style={{width: '950px'}}> 
               </td>
             <td aling="right" className='recharts-cartesian-axis'>
                 Days After SHO  
             </td>
             <td>
-            <Dropdown align="right" className='recharts-cartesian-axis' 
-                onChange={this.daysAfterChange}  
-                options={daysAfterOptions} 
-                value={""+this.xDaysAfter}
-                style={{width:"100px"}} 
-                />
+            {this.discreteSlider()}
+
             </td>
           </tr>
           </tbody>
@@ -360,6 +407,23 @@ export default class BarChartGrowthRateAllNow extends Component{
         )
     }
 
+    discreteSlider() {      
+        return (
+          <div  style={{width:'150px'}}>
+            <Slider className='PrettoSlider'
+              defaultValue={6}
+              valueLabelDisplay="on"
+              aria-labelledby="discrete-slider"
+              valueLabelDisplay="auto"
+              onChange = {this.daysAfterChange}
+              step={3}
+              marks
+              min={-15}
+              max={21}
+            />
+          </div>
+        );
+      }
     render(){     
         if(this.state.renderData == null)   {
             return ("")
@@ -388,23 +452,29 @@ export default class BarChartGrowthRateAllNow extends Component{
             <table width="100%">
         <tbody>
           <tr>
-            <td style={{width: '1050px'}}> 
-
-                    <div align="left" className='recharts-cartesian-axis' style={{paddingLeft:'60px'}}>
+            <td style={{width: '100px'}}> 
+            
+            <div align="left" className='recharts-cartesian-axis' style={{paddingLeft:'15px'}}>
                          
-                    <input type="radio"
-                        value="n"
-                        checked={this.state.dataShowMode === "n"}
-                        onChange={this.radioChangeSelectData} />Now
-                    <input type="radio"
-                        value="s"
-                        checked={this.state.dataShowMode === "s"}
-                        onChange={this.radioChangeSelectData}/>SHO
-                    <input type="radio"
-                        value="ns"
-                        checked={this.state.dataShowMode === "ns"}
-                        onChange={this.radioChangeSelectData}/>Both
-                     </div> 
+                <Grid style={{marginLeft:'15px'}} container spacing={4} direction="column" alignItems="center">
+                <Grid item>
+                    <ToggleButtonGroup size="small" value={this.state.dataShowMode} exclusive onChange={(e, nV)=>{var n= nV !== null?this.radioChangeSelectData(nV):null}}>
+                        <ToggleButton key={0} value={'n'} aria-label="left aligned">
+                        <font color='black'> Now </font>
+                        </ToggleButton>
+                        <ToggleButton key={1} value={'s'} aria-label="left aligned">
+                        <font color='black'>SHO</font>
+                        </ToggleButton>
+                        <ToggleButton key={1} value={'ns'} aria-label="left aligned">
+                        <font color='black'>Both</font>
+                        </ToggleButton>
+                    </ToggleButtonGroup>
+                </Grid>
+                </Grid>
+
+            </div> 
+            </td>
+            <td style={{width: '800px'}}> 
             </td>
             <td aling="right" className='recharts-cartesian-axis'>
                 Sort by 
@@ -435,20 +505,26 @@ export default class BarChartGrowthRateAllNow extends Component{
            <Tooltip content={this.renderTooltipBarChart}/>
            <Legend />           
            {this.state.dataShowMode.includes("n")?(
-                <Bar dataKey={currentDataSelection.sortOptions[i1].yKey} stackId="a" name={currentDataSelection.sortOptions[i1].legend} stroke={currentDataSelection.sortOptions[i1].color} fill={currentDataSelection.sortOptions[i1].color}/>
+                <Bar dataKey={currentDataSelection.sortOptions[i1].yKey} 
+                     stackId="a" 
+                     key={1}
+                     name={currentDataSelection.sortOptions[i1].legend} 
+                     stroke={currentDataSelection.sortOptions[i1].color} 
+                     fill={currentDataSelection.sortOptions[i1].color}/>
            ):""}
            {this.state.dataShowMode.includes("n")?(
-                <Bar dataKey={currentDataSelection.sortOptions[i2].yKey} stackId="a" name={currentDataSelection.sortOptions[i2].legend} stroke={currentDataSelection.sortOptions[i2].color} fill={currentDataSelection.sortOptions[i2].color}/>
+                <Bar dataKey={currentDataSelection.sortOptions[i2].yKey} stackId="a" key={2} name={currentDataSelection.sortOptions[i2].legend} stroke={currentDataSelection.sortOptions[i2].color} fill={currentDataSelection.sortOptions[i2].color}/>
            ):""}
            {this.state.dataShowMode.includes("s")?(
-               <Bar dataKey={currentDataSelection.sortOptions[i3].yKey} stackId="a" name={currentDataSelection.sortOptions[i3].legend} stroke={currentDataSelection.sortOptions[i3].color} fill={currentDataSelection.sortOptions[i3].color}/>
+               <Bar dataKey={currentDataSelection.sortOptions[i3].yKey} stackId="a" key={3} name={currentDataSelection.sortOptions[i3].legend} stroke={currentDataSelection.sortOptions[i3].color} fill={currentDataSelection.sortOptions[i3].color}/>
            ):""}
            {this.state.dataShowMode.includes("s")?(
-               <Bar dataKey={currentDataSelection.sortOptions[i4].yKey} stackId="a" name={currentDataSelection.sortOptions[i4].legend} stroke={currentDataSelection.sortOptions[i4].color} fill={currentDataSelection.sortOptions[i4].color}/>
+               <Bar dataKey={currentDataSelection.sortOptions[i4].yKey} stackId="a" key={4} name={currentDataSelection.sortOptions[i4].legend} stroke={currentDataSelection.sortOptions[i4].color} fill={currentDataSelection.sortOptions[i4].color}/>
            ):""}
 
           </BarChart>
           {this.renderGrothRateRatioAfterXDays()}
+          <ScatterChartAtSHO data={this.state.renderData} mapStates={this.state.mapStates}/>
           </div>
         )
     }    

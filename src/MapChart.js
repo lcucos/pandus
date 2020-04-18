@@ -99,10 +99,10 @@ class MapChart extends React.Component {
     }
     return(
       <>
-      <div align='left'  style={{color:color}}>{label}</div> 
-      <div align='right' style={{color:color}}>{Number(value).toLocaleString()}</div>
-      <div align='right' style={{color:color}}>{!!percent1From?(value/percent1From * 100).toFixed(2)+"% ":""}</div>
-      <div align='left'  style={{color:color, marginLeft:margin}}>  {(!!val3 ? val3 : "")} </div>
+      <div key={1} align='left'  style={{color:color}}>{label}</div> 
+      <div key={2} align='right' style={{color:color}}>{Number(value).toLocaleString()}</div>
+      <div key={3} align='right' style={{color:color}}>{!!percent1From?(value/percent1From * 100).toFixed(2)+"% ":""}</div>
+      <div key={4} align='left'  style={{color:color, marginLeft:margin}}>  {(!!val3 ? val3 : "")} </div>
       </>
     )
   }
@@ -113,8 +113,8 @@ class MapChart extends React.Component {
     }
     return (
       <>
-      <div align='left' >{label}</div>
-      <div align='right'> {value} </div>
+      <div key={1} align='left' >{label}</div>
+      <div key={2} align='right'> {value} </div>
       </>
     )
 
@@ -267,10 +267,10 @@ class MapChart extends React.Component {
           <text x={sX+41} y={sY+4} dominantBaseline="central" textAnchor="start">Tests @ 1 Mil</text>
           {arr.map(b =>(
             <>
-            <text x={sX+55} y={sY+18 +12*b.index} dominantBaseline="central" textAnchor="end">{b.bucketTextStart}</text>
-            <text x={sX+75} y={sY+18 +12*b.index} dominantBaseline="central" textAnchor="end">to</text>
-            <text x={sX+115} y={sY+18 +12*b.index} dominantBaseline="central" textAnchor="end">{b.bucketTextStop}</text>
-            <rect width="10" height="10" x={sX+2} y={sY + 15 +12*b.index} fillOpacity={1} fill={b.color} strokeWidth="1" stroke='lightgray'/>
+            <text key={1} x={sX+55} y={sY+18 +12*b.index} dominantBaseline="central" textAnchor="end">{b.bucketTextStart}</text>
+            <text key={2} x={sX+75} y={sY+18 +12*b.index} dominantBaseline="central" textAnchor="end">to</text>
+            <text key={3} x={sX+115} y={sY+18 +12*b.index} dominantBaseline="central" textAnchor="end">{b.bucketTextStop}</text>
+            <rect key={4} width="10" height="10" x={sX+2} y={sY + 15 +12*b.index} fillOpacity={1} fill={b.color} strokeWidth="1" stroke='lightgray'/>
             </>
         ))}
         </g>

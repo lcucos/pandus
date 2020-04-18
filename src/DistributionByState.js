@@ -211,10 +211,10 @@ class PieChartSummary extends Component{
         var name_extra=name.replace(/.*\(/gi, '');
         return(
                 <>
-                    <div align='left' style={{color:color}}>{name_short}</div>
-                    <div align='center' style={{color:color}}>:</div>
-                    <div align='right' style={{color:color}}>{value.toFixed(2) + " %"}</div> 
-                    <div align='left' style={{color:color}}>{name_extra}</div>
+                    <div key={1} align='left' style={{color:color}}>{name_short}</div>
+                    <div key={2} align='center' style={{color:color}}>:</div>
+                    <div key={3} align='right' style={{color:color}}>{value.toFixed(2) + " %"}</div> 
+                    <div key={4} align='left' style={{color:color}}>{name_extra}</div>
                 </>
         )
     }
@@ -231,10 +231,10 @@ class PieChartSummary extends Component{
             <div className="grid_bar_chart_tooltip">
             {props.payload.map(item=>(
                          <>
-                             <div align='left'  style={{color:item.color}}>{item.name.replace(/\(.*/gi, '')}</div>
-                             <div align='center' style={{color:item.color}}>:</div>
-                             <div align='right' style={{color:item.color}}>{item.value.toFixed(2) + " %"}</div> 
-                             <div align='left'   style={{color:item.color, marginLeft:'8px'}}>{item.name.replace(/.*%|\)/gi, '')}</div>
+                             <div key={1} align='left'  style={{color:item.color}}>{item.name.replace(/\(.*/gi, '')}</div>
+                             <div key={2} align='center' style={{color:item.color}}>:</div>
+                             <div key={3} align='right' style={{color:item.color}}>{item.value.toFixed(2) + " %"}</div> 
+                             <div key={4} align='left'   style={{color:item.color, marginLeft:'8px'}}>{item.name.replace(/.*%|\)/gi, '')}</div>
                          </>
                  ))}
             </div>

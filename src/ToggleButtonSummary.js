@@ -45,6 +45,7 @@ function createButton(index,id, color, value, precentText, text, percent){
 export default function ToggleButtonSummary(data) {  
     const summary  = data.summary
     const [alignment, setAlignment] = React.useState(data.showFlags);
+    //console.dir(alignment)
     const handleChange = (event, newAlignment) => {
        setAlignment(newAlignment);
        updateTests(newAlignment)

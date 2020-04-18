@@ -184,12 +184,12 @@ class App extends Component {
        .catch(error => this.setState({ error, isLoading: false }));
    }
    render(){
-      console.log("Environment: "+(!!process.env.REACT_APP_ENV_NAME?process.env.REACT_APP_ENV_NAME : "production"))
       const {error} = this.state;
       
       if (error) {
         return <p>{error.message}</p>;
       }
+      console.log("Environment: "+(!!process.env.REACT_APP_ENV_NAME?process.env.REACT_APP_ENV_NAME : "production"))
       
       var sizeMap = Object.keys(this.state.mapStatesByGeoId).length;
       if (this.state.isLoading || sizeMap===0) {
